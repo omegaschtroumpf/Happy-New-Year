@@ -23,6 +23,8 @@
     <sprites name="abobo">
       <sprite>sprites\spr_abobo</sprite>
       <sprite>sprites\spr_abobo_grabbed</sprite>
+      <sprite>sprites\spr_abobo_dunked</sprite>
+      <sprite>sprites\spr_abobo_prone</sprite>
     </sprites>
   </sprites>
   <backgrounds name="background"/>
