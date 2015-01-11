@@ -34,7 +34,7 @@ resist = 1;
 grab = false;
 grabbed = false;
 thrown = false;
-
+dunked = false;
 
 </string>
           </argument>
@@ -58,7 +58,9 @@ thrown = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>sprite_index = spr_abobo
+            <string>sprite_index = spr_abobo;
+image_yscale = 1;
+image_xscale = 1;
 </string>
           </argument>
         </arguments>
@@ -187,9 +189,15 @@ if thrown = true{
     }
     
     
-}
+    //!!! DUNKING UNDER DEVELOPMENT!!!
+if dunked = true{
+    grabbed = false;
+    dunked = false;
+    image_yscale = -1;
+    alarm [0] = 50;
+    }
                            
-           
+}
 </string>
           </argument>
         </arguments>

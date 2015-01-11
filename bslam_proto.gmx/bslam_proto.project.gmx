@@ -12,7 +12,10 @@
     <sprite>sprites\sprite6</sprite>
     <sprites name="haggar">
       <sprite>sprites\spr_haggar_idle</sprite>
+      <sprite>sprites\spr_haggar_crouch</sprite>
+      <sprite>sprites\spr_haggar_jumping</sprite>
       <sprite>sprites\spr_haggar_jump</sprite>
+      <sprite>sprites\spr_haggar_land</sprite>
       <sprite>sprites\spr_haggar_walk</sprite>
       <sprite>sprites\spr_haggar_grabwalk</sprite>
       <sprite>sprites\spr_haggar_grab</sprite>
@@ -23,6 +26,8 @@
     <sprites name="abobo">
       <sprite>sprites\spr_abobo</sprite>
       <sprite>sprites\spr_abobo_grabbed</sprite>
+      <sprite>sprites\spr_abobo_dunked</sprite>
+      <sprite>sprites\spr_abobo_prone</sprite>
     </sprites>
   </sprites>
   <backgrounds name="background"/>

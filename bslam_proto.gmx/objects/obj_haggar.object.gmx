@@ -28,15 +28,20 @@
             <string>z=0;
 as=0;
 image_speed = .2;
-jump = false
 canjump = true;
+jump = false;
+
+jpower = 6;
+jpowermax = 24;
+
+cangrab = true;
 grab = false;
 grabbed = false;
+
+
+throwing = false;
 thrown = false;
-cangrab = true;
-dunk = false
-
-
+dunk = false;
 
 </string>
           </argument>
@@ -151,7 +156,9 @@ dunk = false
     z+=as//we increase our height by our current "air speed"
     as-=1//our air speed decreases by 1, eventually it go below zero and we'll fall
     if grab = true {
-    as-=2.5}
+    as-=1.0}
+    if z &gt;=100 {
+    as-=.3}
 }
 if(z&lt;1 and as!=0)//if we've hit the ground
 {
@@ -166,6 +173,8 @@ draw_sprite_ext(sprite_index,image_index,x,y-z,2,2,image_angle,image_blend,image
 
 
 //input and animation
+if throwing == false &amp;&amp; dunk == false{
+
 {
     if(keyboard_check(vk_right) &amp;&amp; place_free(x+4.4,y) &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump) {
         x+=4.4;
@@ -189,18 +198,53 @@ draw_sprite_ext(sprite_index,image_index,x,y-z,2,2,image_angle,image_blend,image
         sprite_index = spr_haggar_walk
         image_speed = .2;
     }
-    if(keyboard_check(vk_space) &amp;&amp; (z=0)) &amp;&amp; canjump = true//if we're on the ground and try to jump
+    
+    /*
+    //ORIGINAL JUMP
+    if(keyboard_check(vk_space) &amp;&amp; (z=0)) &amp;&amp; canjump == true//if we're on the ground and try to jump
     {
+    
         jump = true
-        z=1;as=15//we get off the ground and get an air speed
+        z=1;as=18//we get off the ground and get an air speed
         canjump = false;
         alarm[1] = 35
+    */
+        
+    
+      
+    //CHARGE JUMP IN DEVELOPMENT \\  
+    if(keyboard_check_pressed(vk_space) &amp;&amp; (z = 0)){
+        image_index = spr_haggar_crouch} //This totally doesn't work, originally had this in next chunk, and tried in release chunk!
+     
+    if(keyboard_check(vk_space) &amp;&amp; (z = 0)){
+        if jpower &lt; jpowermax{
+        jpower += 1;
+        }
+        
+}
+    
+    if(keyboard_check_released(vk_space) &amp;&amp; (z = 0)) {
+    jump = true;
+    sprite_index = spr_haggar_jump;
+    z = 1;
+    as = jpower;
+    canjump = false;
+    alarm[1] = 35; 
+    jpower = 6
     }
-
-    if(!keyboard_check(vk_right) &amp;&amp; !keyboard_check(vk_left) &amp;&amp; !keyboard_check(vk_up) &amp;&amp; !keyboard_check(vk_down) &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_throw) {
+    
+ }
+     
+        
+    
+}
+    
+    if(!keyboard_check(vk_right) &amp;&amp; !keyboard_check(vk_left) &amp;&amp; !keyboard_check(vk_up) &amp;&amp; !keyboard_check(vk_down) &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_throw &amp;&amp; sprite_index != spr_haggar_slam &amp;&amp; sprite_index != spr_haggar_grabwalk) {
         image_speed = .2; 
         sprite_index = spr_haggar_idle;
-    }
+    } 
+    
+    
 
     //grabbing
 {    if keyboard_check_pressed(ord('D')) &amp;&amp; sprite_index !=spr_haggar_grab &amp;&amp; cangrab = true{
@@ -212,30 +256,33 @@ draw_sprite_ext(sprite_index,image_index,x,y-z,2,2,image_angle,image_blend,image
 }
     
     //throwing
-else if grab == true &amp;&amp; jump !=true &amp;&amp; keyboard_check_pressed(ord('F')) {
+else if grab == true &amp;&amp; jump == false &amp;&amp; keyboard_check_pressed(ord('F')) {
+    throwing = true
     grab = false;
     obj_abobo.grabbed = false;
     obj_abobo.thrown = true;
-    //sprite_index = spr_haggar_idle;
     sprite_index = spr_haggar_throw;
-    image_speed = .2; //not sure why this animation is cut off??
-}
-   
-    /*
-    //slamming // UNDER DEVELOPMENT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-if jump == true &amp;&amp; grab == true &amp;&amp; keyboard_check_pressed(ord('F')){ 
-    grab = false;
-    dunk = true;
-    obj_abobo.grabbed = false
     image_speed = .2; 
-    sprite_index = spr_haggar_slam; //again, this animation is getting snipped?
+}
+
+
+//!!!!DUNK UNDER DEVELOPMENT!!!!
+if jump == true &amp;&amp; grab == true &amp;&amp; z &gt;50 &amp;&amp; obj_abobo.grabbed = true &amp;&amp; keyboard_check_pressed(ord('F')){ 
+    dunk = true;
+    obj_abobo.dunked = true;
+    obj_abobo.grabbed = false;
+    image_speed = .2; 
+    sprite_index = spr_haggar_slam; 
     as-=2;
+    grab = false;
+    }
+    
+
+    
 }
-    */
+
     
-    
-    
-}
+
 
  
 //look like you grabbing  
@@ -249,7 +296,8 @@ if grab = true &amp;&amp; (!keyboard_check(vk_right) &amp;&amp; !keyboard_check(
 }
 
 
-}
+
+
 
 
 </string>
@@ -274,8 +322,17 @@ if grab = true &amp;&amp; (!keyboard_check(vk_right) &amp;&amp; !keyboard_check(
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///stop grabbing, dude
+            <string>//know when you're done throwing or dunking
+if sprite_index == spr_haggar_throw{
+    throwing = false;
+    }
+    
+if sprite_index == spr_haggar_slam{
+    dunk = false 
+    }
+        
 
+//stop grabbing, dude
 {
     if(grab = false) &amp;&amp; sprite_index == spr_haggar_grab {
         sprite_index = spr_haggar_idle;
@@ -294,7 +351,17 @@ if grab = true &amp;&amp; (!keyboard_check(vk_right) &amp;&amp; !keyboard_check(
     sprite_index = spr_haggar_idle;
     }
 }
+
+//if you jumped, you're jumping
+    if sprite_index == spr_haggar_jump {
+    sprite_index = spr_haggar_jumping;
+    }
+
 }
+
+    
+
+
 </string>
           </argument>
         </arguments>
