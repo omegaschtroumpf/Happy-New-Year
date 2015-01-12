@@ -182,10 +182,11 @@ if (grabbed = true || obj_haggar.dunk = true) &amp;&amp; obj_haggar.jump = true 
 
 if thrown = true{
     grabbed = false;
-    z=1;as=22;
+    z=1; as=obj_haggar.throwpower;      //as has been changed from 22 to dynamic value based on Haggar's throwpower
     sprite_index = spr_abobo_grabbed;
     thrown = false;
     alarm [0] = 50
+    obj_haggar.throwpower = 10;
     }
     
     
