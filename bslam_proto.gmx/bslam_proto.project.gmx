@@ -8,6 +8,7 @@
   <sprites name="sprites">
     <sprite>sprites\spr_dunkbeast</sprite>
     <sprite>sprites\shadow</sprite>
+    <sprite>sprites\spr_haggarpunch_mask</sprite>
     <sprite>sprites\spr_small_shadow</sprite>
     <sprite>sprites\sprite6</sprite>
     <sprites name="haggar">
@@ -18,6 +19,8 @@
       <sprite>sprites\spr_haggar_walk</sprite>
       <sprite>sprites\spr_haggar_grabwalk</sprite>
       <sprite>sprites\spr_haggar_grab</sprite>
+      <sprite>sprites\spr_haggar_punch</sprite>
+      <sprite>sprites\spr_haggar_chargegrab</sprite>
       <sprite>sprites\spr_haggar_throw</sprite>
       <sprite>sprites\spr_haggar_grabidle</sprite>
       <sprite>sprites\spr_haggar_slam</sprite>
@@ -25,6 +28,7 @@
     <sprites name="abobo">
       <sprite>sprites\spr_abobo</sprite>
       <sprite>sprites\spr_abobo_grabbed</sprite>
+      <sprite>sprites\spr_abobo_stunned</sprite>
       <sprite>sprites\spr_abobo_dunked</sprite>
       <sprite>sprites\spr_abobo_prone</sprite>
     </sprites>

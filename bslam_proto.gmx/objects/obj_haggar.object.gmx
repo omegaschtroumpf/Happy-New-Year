@@ -180,24 +180,24 @@ draw_sprite_ext(sprite_index,image_index,x,y-z,2,2,image_angle,image_blend,image
 if throwing == false &amp;&amp; dunk == false{
 
 {
-    if(keyboard_check(vk_right) &amp;&amp; place_free(x+4.4,y) &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_crouch) {
+    if(keyboard_check(vk_right) &amp;&amp; place_free(x+4.4,y) &amp;&amp; sprite_index != spr_haggar_punch &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_crouch &amp;&amp; sprite_index != spr_haggar_chargegrab) {
         x+=4.4;
         sprite_index = spr_haggar_walk
         image_speed = .2;
         image_xscale = 1;
     }
-    if(keyboard_check(vk_left) &amp;&amp; place_free(x-4.4,y) &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_crouch) {
+    if(keyboard_check(vk_left) &amp;&amp; place_free(x-4.4,y) &amp;&amp; sprite_index != spr_haggar_punch &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_crouch &amp;&amp; sprite_index != spr_haggar_chargegrab) {
         x-=4.4;
         sprite_index = spr_haggar_walk
         image_speed = .2;
         image_xscale = -1;
     }
-    if(keyboard_check(vk_up) &amp;&amp; place_free(x,y-4) &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_crouch) {
+    if(keyboard_check(vk_up) &amp;&amp; place_free(x,y-4) &amp;&amp; sprite_index != spr_haggar_punch &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_crouch &amp;&amp; sprite_index != spr_haggar_chargegrab) {
         y-=4;
         sprite_index = spr_haggar_walk
         image_speed = .2;
     }
-    if(keyboard_check(vk_down) &amp;&amp; place_free(x,y+4) &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_crouch) {
+    if(keyboard_check(vk_down) &amp;&amp; place_free(x,y+4) &amp;&amp; sprite_index != spr_haggar_punch &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_crouch &amp;&amp; sprite_index != spr_haggar_chargegrab) {
         y+=4;
         sprite_index = spr_haggar_walk
         image_speed = .2;
@@ -233,13 +233,14 @@ if throwing == false &amp;&amp; dunk == false{
         
     
 }
+    //THERE HAS TO BE A BETTER WAY TO DO THIS OTHER THAN WRITE THIS STUPIDLY LONG LINE OF CODE BUT... FOR NOW....
     //If you're not doing anything, assume an idle pose    
-    if(!keyboard_check(vk_right) &amp;&amp; !keyboard_check(vk_left) &amp;&amp; !keyboard_check(vk_up) &amp;&amp; !keyboard_check(vk_down) &amp;&amp; sprite_index != spr_haggar_crouch &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_throw &amp;&amp; sprite_index != spr_haggar_slam &amp;&amp; sprite_index != spr_haggar_grabwalk) {
+    if(!keyboard_check(vk_right) &amp;&amp; !keyboard_check(vk_left) &amp;&amp; !keyboard_check(vk_up) &amp;&amp; !keyboard_check(vk_down) &amp;&amp; sprite_index != spr_haggar_punch &amp;&amp; sprite_index != spr_haggar_crouch &amp;&amp; sprite_index != spr_haggar_chargegrab &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_throw &amp;&amp; sprite_index != spr_haggar_slam &amp;&amp; sprite_index != spr_haggar_grabwalk) {
         image_speed = .2; 
         sprite_index = spr_haggar_idle;
     } 
     
-    
+    //GRAB AND PUNCH
 
     //GRABBING
 {    if keyboard_check_pressed(ord('D')) &amp;&amp; sprite_index !=spr_haggar_grab &amp;&amp; cangrab = true{
@@ -248,22 +249,24 @@ if throwing == false &amp;&amp; dunk == false{
         image_speed = .3 
         cangrab = false;
         alarm[2] = 30;
+        }
 }
 
-    
- /*   //ORIGINAL throwing  
-else if grab == true &amp;&amp; jump == false &amp;&amp; keyboard_check_pressed(ord('F')) {
-    throwing = true;
-    grab = false;
-    obj_abobo.grabbed = false;
-    obj_abobo.thrown = true;
-    sprite_index = spr_haggar_throw;
-    image_speed = .2; 
+    //PUNCHING - F
+    if keyboard_check_pressed(ord('S')) &amp;&amp; grab = false &amp;&amp; throwing = false{
+        sprite_index = spr_haggar_idle;
+        sprite_index = spr_haggar_punch;
+        if image_index = 1 || 2 {
+            mask_index = spr_haggarpunch_mask}
+        image_speed = .6 
+        cangrab = false;
+        alarm[2] = 30;
 }
- */
+
  
     //CHARGE THROWING FUNCTIONAL
-else if grab == true &amp;&amp; jump == false &amp;&amp; keyboard_check(ord('F')) {
+if grab == true &amp;&amp; jump == false &amp;&amp; keyboard_check(ord('F')) {
+    sprite_index = spr_haggar_chargegrab;
     if throwpower &lt; tpowermax {
         throwpower += 1}
 }    
@@ -276,6 +279,15 @@ else if grab == true &amp;&amp; jump == false &amp;&amp; keyboard_check(ord('F')
     image_speed = .2; 
 
 }
+
+ //Gotta let go  !!!! MUST BE STANDIND STILL !!!
+    if grab = true &amp;&amp; throwing = false &amp;&amp; keyboard_check_pressed(ord('D')){  
+            sprite_index = spr_haggar_idle;
+            grab = false;
+            thrown = false
+            obj_abobo.grabbed = false;
+            }
+         
 
 //DUNK IS FUNCTIONAL
 if jump == true &amp;&amp; grab == true &amp;&amp; z &gt;50 &amp;&amp; obj_abobo.grabbed = true &amp;&amp; keyboard_check_pressed(ord('F')){ 
@@ -290,13 +302,13 @@ if jump == true &amp;&amp; grab == true &amp;&amp; z &gt;50 &amp;&amp; obj_abobo
     
 
     
-}
-//look like you grabbing  
-if grab = true &amp;&amp; (!keyboard_check(vk_right) &amp;&amp; !keyboard_check(vk_left) &amp;&amp; !keyboard_check(vk_up) &amp;&amp; !keyboard_check(vk_down) &amp;&amp; sprite_index  &amp;&amp; sprite_index != spr_haggar_jump){
-                sprite_index = spr_haggar_grabidle
 
+//look like you grabbing  
+if grab = true &amp;&amp; (!keyboard_check(vk_right) &amp;&amp; !keyboard_check(vk_left) &amp;&amp; !keyboard_check(vk_up) &amp;&amp; !keyboard_check(vk_down) &amp;&amp; sprite_index  &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_chargegrab){
+                sprite_index = spr_haggar_grabidle
+                
     }else { 
-    if grab = true {
+    if grab = true &amp;&amp; sprite_index != spr_haggar_chargegrab &amp;&amp; sprite_index != spr_haggar_idle{
         sprite_index = spr_haggar_grabwalk;
     }    
 }
@@ -362,7 +374,10 @@ if sprite_index == spr_haggar_slam{
     sprite_index = spr_haggar_idle}
 
 }
-
+//punch again another day (just not right now)
+    if sprite_index == spr_haggar_punch {
+    sprite_index = spr_haggar_idle}
+    
     
 
 

@@ -29,7 +29,11 @@
 as=0;
 image_speed = .2;
 
+//punching bag create, to be overwritten by universal player variables
+
+stunned = false;
 resist = 1;
+
 
 grab = false;
 grabbed = false;
@@ -61,6 +65,7 @@ dunked = false;
             <string>sprite_index = spr_abobo;
 image_yscale = 1;
 image_xscale = 1;
+stunned = false;
 </string>
           </argument>
         </arguments>
@@ -137,24 +142,41 @@ z=0//this keeps us from going below the ground, so to speak
 as=0//we stop moving through the air
 }
 
-
+if grabbed = false &amp;&amp; stunned = false { //temp fix for permastungrab
+    sprite_index = spr_abobo
 //face your opponent
-        if (x &lt;= obj_haggar.x) {
+        if (x &lt;= obj_haggar.x) &amp;&amp; sprite_index {
             image_xscale = 1;
             } else {
               image_xscale = -1;
             }
-
+}
 //Get grabbed, son
 
-if place_meeting(x,y,obj_haggar) &amp;&amp; (obj_haggar.sprite_index == spr_haggar_grab) &amp;&amp; z &lt; obj_haggar.z +10 &amp;&amp; z &gt; obj_haggar.z -10 {
+if place_meeting(x,y,obj_haggar) &amp;&amp; (obj_haggar.sprite_index == spr_haggar_grab) &amp;&amp; z &lt; obj_haggar.z +11 &amp;&amp; z &gt; obj_haggar.z -8 {
                 grabbed = true;
+}
+
+//Get punched, son - TEST
+
+if place_meeting(x,y,obj_haggar) &amp;&amp; (obj_haggar.sprite_index == spr_haggar_punch) &amp;&amp; z &lt; obj_haggar.z +11 &amp;&amp; z &gt; obj_haggar.z -8 {
+                sprite_index = spr_abobo; //trying instance place instead of place_meeting
+                stunned = true;
+                sprite_index = spr_abobo_stunned;
+                alarm [0] = 12;
+if stunned = true {
+    depth = depth + 13}
+               /* 
+               cangrab = false
+               canthrow = false
+               canmove = false 
+                */
 }
 
 
 {         
 //grabbed!
-if grabbed = true &amp;&amp; obj_haggar.image_xscale = 1{
+if (grabbed = true) &amp;&amp; obj_haggar.image_xscale = 1{
 obj_haggar.grab = true;
 sprite_index = spr_abobo_grabbed;
 image_speed = 0;
@@ -162,13 +184,25 @@ x = obj_haggar.x +30;
 y = obj_haggar.y -7;
 } 
 
-if grabbed = true &amp;&amp; obj_haggar.image_xscale = -1 {
+
+if (grabbed = true) &amp;&amp; obj_haggar.image_xscale = -1 {
 obj_haggar.grab = true;
 sprite_index = spr_abobo_grabbed;
 image_speed = 0;
 x = obj_haggar.x -30;
 y = obj_haggar.y -7;
 } 
+
+//charge grabbed
+if grabbed = true &amp;&amp; obj_haggar.sprite_index = spr_haggar_chargegrab &amp;&amp; obj_haggar.image_xscale = 1{
+x = obj_haggar.x +27 
+y = obj_haggar.y;
+}
+
+if grabbed = true &amp;&amp; obj_haggar.sprite_index = spr_haggar_chargegrab &amp;&amp; obj_haggar.image_xscale = -1{
+x = obj_haggar.x -33; 
+y = obj_haggar.y;
+}
 
 //if grabbed and jumped
 if (grabbed = true || obj_haggar.dunk = true) &amp;&amp; obj_haggar.jump = true {
@@ -179,7 +213,7 @@ if (grabbed = true || obj_haggar.dunk = true) &amp;&amp; obj_haggar.jump = true 
 }
 
 
-
+//get throwed
 if thrown = true{
     grabbed = false;
     z=1; as=obj_haggar.throwpower;      //as has been changed from 22 to dynamic value based on Haggar's throwpower
@@ -199,6 +233,8 @@ if dunked = true{
     }
                            
 }
+
+
 </string>
           </argument>
         </arguments>
