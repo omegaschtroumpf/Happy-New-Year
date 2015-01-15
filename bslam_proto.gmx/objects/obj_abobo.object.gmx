@@ -29,16 +29,54 @@
 as=0;
 image_speed = .2;
 
+alarm[1] = 30;
+text = "alarm 1"
 //punching bag create, to be overwritten by universal player variables
 
+canhit = true;
 stunned = false;
-resist = 1;
+tenderized  = 0;
+maxtenderized = 2;
 
 
 grab = false;
 grabbed = false;
 thrown = false;
 dunked = false;
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>alarm[1] = 30;
+if tenderized &gt;= maxtenderized{
+    tenderized = maxtenderized}
+
+if tenderized &gt;1 {
+    tenderized -= .02;
+    }
+else if tenderized &lt;1 {
+    tenderized = 1;
+    }
+    
 
 </string>
           </argument>
@@ -62,10 +100,10 @@ dunked = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>sprite_index = spr_abobo;
-image_yscale = 1;
+            <string>image_yscale = 1;
 image_xscale = 1;
 stunned = false;
+canhit = true;
 </string>
           </argument>
         </arguments>
@@ -129,27 +167,31 @@ stunned = false;
           <argument>
             <kind>1</kind>
             <string>///Vague awareness and dunkability
-
-//air behavior
 if(z&gt;0)//if we're above the ground
 {
-z+=as//we increase our height by our current air speed
-as-=1//our air speed decreases by 1, eventually it go below zero and we'll fall
+    z+=as//we increase our height by our current "air speed"
+    as-=.7//our air speed decreases by 1, eventually it go below zero and we'll fall
+    if grab = true {
+        as-=1.3}
+        if z &gt;=100 {
+        as-=.3}
 }
 if(z&lt;1 and as!=0)//if we've hit the ground
 {
-z=0//this keeps us from going below the ground, so to speak
-as=0//we stop moving through the air
+    jump = false;
+    z=0;//this keeps us from going below the ground, so to speak
+    as=0;//we stop moving through the air
 }
 
-if grabbed = false &amp;&amp; stunned = false { //temp fix for permastungrab
-    sprite_index = spr_abobo
+
 //face your opponent
         if (x &lt;= obj_haggar.x) &amp;&amp; sprite_index {
             image_xscale = 1;
             } else {
               image_xscale = -1;
             }
+            if grabbed = false &amp;&amp; stunned = false { //temp fix for permastungrab
+    sprite_index = spr_abobo
 }
 //Get grabbed, son
 
@@ -159,11 +201,13 @@ if place_meeting(x,y,obj_haggar) &amp;&amp; (obj_haggar.sprite_index == spr_hagg
 
 //Get punched, son - TEST
 
-if place_meeting(x,y,obj_haggar) &amp;&amp; (obj_haggar.sprite_index == spr_haggar_punch) &amp;&amp; z &lt; obj_haggar.z +11 &amp;&amp; z &gt; obj_haggar.z -8 {
-                sprite_index = spr_abobo; //trying instance place instead of place_meeting
-                stunned = true;
+if place_meeting(x,y,obj_haggar) &amp;&amp; (obj_haggar.sprite_index == spr_haggar_punch) &amp;&amp; z &lt; obj_haggar.z +11 &amp;&amp; z &gt; obj_haggar.z -8 &amp;&amp; canhit = true{
                 sprite_index = spr_abobo_stunned;
-                alarm [0] = 12;
+                image_speed = .1;
+                canhit = false; //this is messing up animation for some reason
+                stunned = true;
+                tenderized += .05; //tender reduces naturally in step event
+                alarm [0] = 10;
 if stunned = true {
     depth = depth + 13}
                /* 
@@ -216,7 +260,7 @@ if (grabbed = true || obj_haggar.dunk = true) &amp;&amp; obj_haggar.jump = true 
 //get throwed
 if thrown = true{
     grabbed = false;
-    z=1; as=obj_haggar.throwpower;      //as has been changed from 22 to dynamic value based on Haggar's throwpower
+    z=1; as=obj_haggar.throwpower * tenderized;      //as has been changed from 22 to dynamic value based on Haggar's throwpower
     sprite_index = spr_abobo_grabbed;
     thrown = false;
     alarm [0] = 50
@@ -235,6 +279,34 @@ if dunked = true{
 }
 
 
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="7" enumb="7">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/* 
+if sprite_index = spr_abobo_stunned {
+sprite_index = spr_abobo;
+    }
+*/ 
+//Disabled due to stunned animation concluding via alarm
 </string>
           </argument>
         </arguments>
@@ -259,6 +331,8 @@ if dunked = true{
             <kind>1</kind>
             <string>draw_sprite(spr_small_shadow,0,x-1,y+7);
 draw_sprite_ext(sprite_index,image_index,x,y-z,image_xscale*1.8,image_yscale*1.6,image_angle,image_blend,image_alpha)
+
+
 
 </string>
           </argument>

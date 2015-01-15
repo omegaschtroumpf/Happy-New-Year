@@ -29,14 +29,21 @@
 as=0;
 image_speed = .2;
 
+reset = false;
+invulnerable = false;
+stunned = false;
+tenderized = 1;
+
+canattack = true;
+
 canjump = true;
 jump = false;
 
 jpower = 6;
-jpowermax = 24;
+jpowermax = 25;
 
 throwpower = 10;
-tpowermax = 24;
+tpowermax = 15;
 
 cangrab = true;
 grab = false;
@@ -70,6 +77,7 @@ dunk = false;
           <argument>
             <kind>1</kind>
             <string>cangrab = true;
+canattack = true;
 </string>
           </argument>
         </arguments>
@@ -158,9 +166,9 @@ dunk = false;
             <string>if(z&gt;0)//if we're above the ground
 {
     z+=as//we increase our height by our current "air speed"
-    as-=1//our air speed decreases by 1, eventually it go below zero and we'll fall
+    as-=.7//our air speed decreases by 1, eventually it go below zero and we'll fall
     if grab = true {
-        as-=.95}
+        as-=1.4}
         if z &gt;=100 {
         as-=.3}
 }
@@ -212,7 +220,7 @@ if throwing == false &amp;&amp; dunk == false{
         image_speed = .2;
     if(keyboard_check(vk_space) &amp;&amp; (z == 0)){
         if jpower &lt; jpowermax{
-        jpower += 1;
+        jpower += .8;
         }
         
 }
@@ -233,7 +241,6 @@ if throwing == false &amp;&amp; dunk == false{
         
     
 }
-    //THERE HAS TO BE A BETTER WAY TO DO THIS OTHER THAN WRITE THIS STUPIDLY LONG LINE OF CODE BUT... FOR NOW....
     //If you're not doing anything, assume an idle pose    
     if(!keyboard_check(vk_right) &amp;&amp; !keyboard_check(vk_left) &amp;&amp; !keyboard_check(vk_up) &amp;&amp; !keyboard_check(vk_down) &amp;&amp; sprite_index != spr_haggar_punch &amp;&amp; sprite_index != spr_haggar_crouch &amp;&amp; sprite_index != spr_haggar_chargegrab &amp;&amp; sprite_index != spr_haggar_grab &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_throw &amp;&amp; sprite_index != spr_haggar_slam &amp;&amp; sprite_index != spr_haggar_grabwalk) {
         image_speed = .2; 
@@ -249,18 +256,21 @@ if throwing == false &amp;&amp; dunk == false{
         image_speed = .3 
         cangrab = false;
         alarm[2] = 30;
+        
+
         }
 }
 
     //PUNCHING - F
-    if keyboard_check_pressed(ord('S')) &amp;&amp; grab = false &amp;&amp; throwing = false{
+    if keyboard_check_pressed(ord('S')) &amp;&amp; grab = false &amp;&amp; throwing = false &amp;&amp; sprite_index != spr_haggar_punch &amp;&amp; canattack = true{
         sprite_index = spr_haggar_idle;
         sprite_index = spr_haggar_punch;
         if image_index = 1 || 2 {
             mask_index = spr_haggarpunch_mask}
         image_speed = .6 
+        canattack = false;
         cangrab = false;
-        alarm[2] = 30;
+        alarm[2] = 22;
 }
 
  
@@ -268,7 +278,7 @@ if throwing == false &amp;&amp; dunk == false{
 if grab == true &amp;&amp; jump == false &amp;&amp; keyboard_check(ord('F')) {
     sprite_index = spr_haggar_chargegrab;
     if throwpower &lt; tpowermax {
-        throwpower += 1}
+        throwpower += .5}
 }    
     if grab == true &amp;&amp; jump == false &amp;&amp; keyboard_check_released(ord('F')) {
     throwing = true;
@@ -280,15 +290,6 @@ if grab == true &amp;&amp; jump == false &amp;&amp; keyboard_check(ord('F')) {
 
 }
 
- //Gotta let go  !!!! MUST BE STANDIND STILL !!!
-    if grab = true &amp;&amp; throwing = false &amp;&amp; keyboard_check_pressed(ord('D')){  
-            sprite_index = spr_haggar_idle;
-            grab = false;
-            thrown = false
-            obj_abobo.grabbed = false;
-            }
-         
-
 //DUNK IS FUNCTIONAL
 if jump == true &amp;&amp; grab == true &amp;&amp; z &gt;50 &amp;&amp; obj_abobo.grabbed = true &amp;&amp; keyboard_check_pressed(ord('F')){ 
     dunk = true;
@@ -299,23 +300,55 @@ if jump == true &amp;&amp; grab == true &amp;&amp; z &gt;50 &amp;&amp; obj_abobo
     as-=2;
     grab = false;
     }
-    
 
-    
-
-//look like you grabbing  
+ //Gotta let go  !!!! MUST BE STANDIND STILL !!!
+    if grab = true &amp;&amp; throwing = false &amp;&amp; keyboard_check_pressed(ord('D')){  
+            sprite_index = spr_haggar_idle;
+            grab = false;
+            thrown = false
+            obj_abobo.grabbed = false;
+            }
+    //look like you grabbing  - this may need to be updated
 if grab = true &amp;&amp; (!keyboard_check(vk_right) &amp;&amp; !keyboard_check(vk_left) &amp;&amp; !keyboard_check(vk_up) &amp;&amp; !keyboard_check(vk_down) &amp;&amp; sprite_index  &amp;&amp; sprite_index != spr_haggar_jump &amp;&amp; sprite_index != spr_haggar_chargegrab){
                 sprite_index = spr_haggar_grabidle
                 
     }else { 
     if grab = true &amp;&amp; sprite_index != spr_haggar_chargegrab &amp;&amp; sprite_index != spr_haggar_idle{
         sprite_index = spr_haggar_grabwalk;
-    }    
+        }    
+
+
+    
+
+
 }
 
+//Test for reset state - Haven't tried yet
+
+if reset = true{
+
+canattack = true;
+
+canjump = true;
+jump = false;
+
+jpower = 6;
+jpowermax = 24;
+
+throwpower = 10;
+tpowermax = 24;
+
+cangrab = true;
+grab = false;
+grabbed = false;
 
 
+throwing = false;
+thrown = false;
+dunk = false;
 
+reset = false;
+}
 
 
 </string>
