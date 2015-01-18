@@ -28,8 +28,6 @@
             <string>/// General AI for enemy
 // What'll he do next?
 
-
-// For now, regular player control
 /// Input, Movement, Attacking, Blocking
 
 // Regenerate Focus
@@ -63,23 +61,13 @@ else {
 
 
 if (!stunned || sword_lock) {
+    // here's where the AI happens for right now
 
-    // player input
-    // left stick input
-    x_axisL = gamepad_axis_value(deviceID, gp_axislh); // -1 .. 1
-    y_axisL = gamepad_axis_value(deviceID, gp_axislv);
-    x_axisR = gamepad_axis_value(deviceID, gp_axisrh);
-    y_axisR = gamepad_axis_value(deviceID, gp_axisrv);
+    if (point_distance(x,y,targetID.x,targetID.y) &lt; 250 &amp;&amp; (random(100) &lt; 5)) shoulder_r_pressed = true;
+    else shoulder_r_pressed = false;
+    x_axisL = dcos(image_angle);
+    y_axisL = dsin(image_angle) * -1;
     
-    // slash button - Right button
-    shoulder_r_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderr);
-    
-    // blcok button - Left button
-    shoulder_l_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderl);
-    shoulder_l_released = gamepad_button_check_released(deviceID, gp_shoulderl);
-    
-    // dash button - XBOX A Button
-    dash_button_pressed = gamepad_button_check_pressed(deviceID, gp_face1);
 }
 
 if (!stunned) {
@@ -308,5 +296,8 @@ if (!stunned) {
   <PhysicsObjectFriction>0.200000002980232</PhysicsObjectFriction>
   <PhysicsObjectAwake>-1</PhysicsObjectAwake>
   <PhysicsObjectKinematic>0</PhysicsObjectKinematic>
-  <PhysicsShapePoints/>
+  <PhysicsShapePoints>
+    <point>16,16</point>
+    <point>24,24</point>
+  </PhysicsShapePoints>
 </object>

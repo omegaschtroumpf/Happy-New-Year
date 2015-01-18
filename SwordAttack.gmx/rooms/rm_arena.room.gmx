@@ -17,21 +17,18 @@
 
 
 player1 = instance_create(256, 256, obj_player);
-player2 = instance_create(512, 256, obj_enemy);
-player3 = instance_create(512, 512, obj_enemy);
-player4 = instance_create(256, 512, obj_player);
+player2 = instance_create(512, 256, obj_player);
+
 
 player1.targetID = player2;
 player2.targetID = player1;
-player3.targetID = player1;
-player4.targetID = player2;
+
 
 // can we do gamepads?  assign input devices
 // make this safer
 player1.deviceID = 0;
 player2.deviceID = 1;
-player3.deviceID = 1;
-player4.deviceID = 0;
+
 
 // play background music
 //audio_play_sound(snd_faust, 2, true);
@@ -39,14 +36,12 @@ player4.deviceID = 0;
 control = instance_create(-50, -50, obj_control);
 control.player1 = player1;
 control.player2 = player2;
-control.player3 = player3;
-control.player4 = player4;
+
 
 
 player1.controlID = control;
 player2.controlID = control;
-player3.controlID = control;
-player4.controlID = control;
+
 
 stats = instance_create(0,0,obj_stats);
 stats.player1 = player1;

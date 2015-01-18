@@ -73,7 +73,7 @@ BLOCK_LOCK_DELAY = 30;
 BLOCK_LOCK_EXTENSION = 15;
 BLOCK_FOCUS_COST = 30;
 RESPAWN_DELAY = 7;
-DAMAGE_DELAY = 7;
+DAMAGE_DELAY = 15;
 NORMAL_IMAGE = 0;
 DAMAGE_IMAGE = 1;
 BLOCKING_IMAGE = 2;
@@ -132,6 +132,7 @@ y_axisR = 0;
 shoulder_r_pressed = 0;
 shoulder_l_pressed = 0;
 shoulder_l_released = 0;
+dash_button_pressed = 0;
 
 </string>
           </argument>
@@ -263,7 +264,7 @@ rm_arena.room_speed = NORMAL_ROOM_SPEED;
 
 
 // later will raise an event so the controller can handle what happens, but for now
-newID = instance_create(random(room_width), random(room_height), obj_character);
+newID = instance_create(random(room_width), random(room_height), object_index);
 // set target and device for new object
 newID.targetID = targetID;
 newID.deviceID = deviceID;
@@ -751,6 +752,12 @@ if (!stunned) {
 // make sure it's not my sword
 if (other.id != swordID) {
     if (!invincible) {
+        // lose my sword
+        if (swordID) {
+            with (swordID) instance_destroy();
+            swordID = 0;
+        }
+            
         // knockback
         x += dcos(targetID.direction) * KNOCKBACK;
         y -= dsin(targetID.direction) * KNOCKBACK;

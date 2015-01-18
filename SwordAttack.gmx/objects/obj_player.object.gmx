@@ -66,15 +66,44 @@ if (!stunned || sword_lock) {
     x_axisR = gamepad_axis_value(deviceID, gp_axisrh);
     y_axisR = gamepad_axis_value(deviceID, gp_axisrv);
     
+    if (keyboard_check(vk_right)) {
+        x_axisL = 1;
+    }
+    if (keyboard_check(vk_left)) {
+        x_axisL = -1;
+    }
+    if (keyboard_check(vk_up)) {
+        y_axisL = -1;
+    }
+    if (keyboard_check(vk_down)) {
+        y_axisL = 1;
+    }    
+    
     // slash button - Right button
     shoulder_r_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderr);
+    
+    if (keyboard_check(vk_space)) {
+        shoulder_r_pressed = 1;
+    }  
     
     // blcok button - Left button
     shoulder_l_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderl);
     shoulder_l_released = gamepad_button_check_released(deviceID, gp_shoulderl);
     
+    if (keyboard_check_pressed(ord('C'))) {
+        shoulder_l_pressed = 1;
+    }
+    if (keyboard_check_released(ord('C'))) {
+        shoulder_l_released = 1;
+    }
+    
+    
     // dash button - XBOX A Button
     dash_button_pressed = gamepad_button_check_pressed(deviceID, gp_face1);
+    
+    if (keyboard_check(ord('V'))) {
+        dash_button_pressed = 1;
+    }  
 }
 
 if (!stunned) {
