@@ -72,6 +72,9 @@ BLOCK_RAISE_DELAY = 7;
 BLOCK_LOCK_DELAY = 30;
 BLOCK_LOCK_EXTENSION = 15;
 BLOCK_FOCUS_COST = 30;
+PARRY_THRESHOLD = 4;
+PARRIED_STUN_DELAY = 15;
+PARRIED_SPEED = 15;
 RESPAWN_DELAY = 7;
 DAMAGE_DELAY = 15;
 NORMAL_IMAGE = 0;
@@ -752,33 +755,76 @@ if (!stunned) {
 // make sure it's not my sword
 if (other.id != swordID) {
     if (!invincible) {
-        // lose my sword
-        if (swordID) {
-            with (swordID) instance_destroy();
-            swordID = 0;
-        }
-            
-        // knockback
-        x += dcos(targetID.direction) * KNOCKBACK;
-        y -= dsin(targetID.direction) * KNOCKBACK;
-        character_health--;
-        image_index = DAMAGE_IMAGE;
-        invincible = true;
-        if (character_health == 0) {
-            // dead.  freeze and set a timer for cleanup event
-            can_move = false;
-            can_attack = false;
-            var i;
-            for (i = 0; i &lt; 12; i++){
-                alarm[i] = -1;
+        if (alarm[4] &gt;= BLOCK_RAISE_DELAY - PARRY_THRESHOLD) {
+            // successful parry
+            attackerID = other.parentID
+            // pushback attacker
+            with (attackerID) {
+                quick_stepping = true;
+                // stunned
+                stunned = true;
+                alarm[8] = PARRIED_STUN_DELAY;
+                
+                blocking = false;
+                block_lock = false;
+                block_held = false;
+                invincible = false;
+                direction = image_angle - 180;
+                speed = PARRIED_SPEED;
+                friction = QUICKSTEP_FRICTION_BASE;
+                // decrease opponent's stamina
+                character_focus -= 20;
+                // disassociate attacker's sword
+                swordID = 0;
             }
-            alarm[6] = RESPAWN_DELAY;
-            // for fun, slow down room speed
-            rm_arena.room_speed = CHARACTER_KILLED_ROOM_SPEED;
+            // destroy opponent sword
+            with (other) instance_destroy();
+    
+            // increase my stamina
+            character_focus += 10;
+            
+            // reset block-related states
+            block_held = false;
+            block_lock = false;
+            can_attack = true;
+            blocking = false;
+            can_block = true;
+            if (alarm[7] == -1) can_quickstep = true;
+            invincible = false;
+            image_index = NORMAL_IMAGE;
+            // clear block-related alarms
+            alarm[4] = -1;
+            alarm[5] = -1;
         }
-        else alarm[1] = DAMAGE_DELAY;
-        // sound when hit
-        audio_play_sound(snd_hit, 1, false);
+        else {
+            // lose my sword
+            if (swordID) {
+                with (swordID) instance_destroy();
+                swordID = 0;
+            }
+            
+            // knockback
+            x += dcos(targetID.direction) * KNOCKBACK;
+            y -= dsin(targetID.direction) * KNOCKBACK;
+            character_health--;
+            image_index = DAMAGE_IMAGE;
+            invincible = true;
+            if (character_health == 0) {
+                // dead.  freeze and set a timer for cleanup event
+                can_move = false;
+                can_attack = false;
+                var i;
+                for (i = 0; i &lt; 12; i++){
+                    alarm[i] = -1;
+                }
+                alarm[6] = RESPAWN_DELAY;
+                // for fun, slow down room speed
+                rm_arena.room_speed = CHARACTER_KILLED_ROOM_SPEED;
+            }
+            else alarm[1] = DAMAGE_DELAY;
+            // sound when hit
+            audio_play_sound(snd_hit, 1, false);
+        }
     }
     else {
         // hit blocked?
