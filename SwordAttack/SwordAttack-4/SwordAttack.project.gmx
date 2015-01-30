@@ -10,6 +10,7 @@
     <sound>sound\snd_block</sound>
     <sound>sound\snd_hit</sound>
     <sound>sound\snd_dash</sound>
+    <sound>sound\snd_parry</sound>
   </sounds>
   <sprites name="sprites">
     <sprite>sprites\spr_player</sprite>
@@ -27,8 +28,8 @@
     <object>objects\obj_charactersword</object>
     <object>objects\obj_hard</object>
     <object>objects\obj_stats</object>
-    <object>objects\obj_player</object>
     <object>objects\obj_enemy</object>
+    <object>objects\obj_player</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\rm_arena</room>

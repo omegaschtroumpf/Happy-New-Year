@@ -32,8 +32,8 @@ MOVEMENT_SPEED = 3;
 KNOCKBACK = 5;
 FOCUS_RATE_THRESHOLD = 50;
 FOCUS_MAX = 100;
-FOCUS_REGEN = 1; // 14 / 30 // ~14 PER SECOND (orig 7/30)
-FOCUS_REGEN_FAST = 1; // 1 / 3 20 PER SECOND (original 1/3)
+FOCUS_REGEN = .78; // 14 / 30 // ~14 PER SECOND (orig 7/30)
+FOCUS_REGEN_FAST = .86; // 1 / 3 20 PER SECOND (original 1/3)
 FOCUS_REGEN_PENALTY = 90; // when focus &lt; 0, # steps regen is suspended
 QUICKSTEP_SPEED_BASE = 15;
 QUICKSTEP_FORWARD_MULTIPLIER = 1.75;
@@ -45,8 +45,8 @@ QUICKSTEP_ATTACK_THRESHOLD = 20;
 QUICKSTEP_COOLDOWN = 30;
 QUICKSTEP_COLLISION_MULTIPLIER = .75;
 QUICKSTEP_MUTUAL_COLLISION_FOCUS_BONUS = 10;
-QUICKSTEP_SINGLE_COLLISION_FOCUS_BONUS = 20;
-QUICKSTEP_SINGLE_COLLISION_FOCUS_PENALTY = 40;
+QUICKSTEP_SINGLE_COLLISION_FOCUS_BONUS = 30;
+QUICKSTEP_SINGLE_COLLISION_FOCUS_PENALTY = 50;
 QUICKSTEP_SPEED_THRESHOLD = 20;
 QUICKSTEP_SHORT_STUN_DELAY = 10;
 QUICKSTEP_LONG_STUN_DELAY = 30;
@@ -68,20 +68,22 @@ SECOND_ATTACK_COMBO_DELAY = 30;
 SECOND_ATTACK_FOCUS_COST = 30;
 ATTACK_PENALTY_CAN_ATTACK_DELAY = 12;
 ATTACK_PENALTY_CAN_MOVE_DELAY = 12;
-BLOCK_RAISE_DELAY = 7;
-BLOCK_LOCK_DELAY = 20;
-BLOCK_LOCK_EXTENSION = 15;
-BLOCK_FOCUS_COST = 30;
+BLOCK_RAISE_DELAY = 5;
+BLOCK_LOCK_DELAY = 12;
+BLOCK_LOCK_EXTENSION = 8;
+BLOCK_FOCUS_COST = 45;
 PARRY_THRESHOLD = 4;
 PARRIED_STUN_DELAY = 15;
 PARRIED_SPEED = 15;
-RESPAWN_DELAY = 7;
+RESPAWN_DELAY = 10;
 DAMAGE_DELAY = 15;
 NORMAL_IMAGE = 0;
 DAMAGE_IMAGE = 1;
 BLOCKING_IMAGE = 2;
-CHARACTER_KILLED_ROOM_SPEED = 10;
+CHARACTER_KILLED_ROOM_SPEED = 15;
 NORMAL_ROOM_SPEED = 30;
+
+random_move = 0; // 1-29
 
 // Sprite property assignments - won't be needed once we have custom sprites
 image_xscale = 3;
@@ -190,6 +192,7 @@ with (swordID) instance_destroy();
             <string>/// Focus Regen Reset
 
 focus_regen = true;
+
 </string>
           </argument>
         </arguments>
@@ -308,7 +311,7 @@ instance_destroy();
             <kind>1</kind>
             <string>/// Minimum Block Time
 block_lock = false;
-if (!block_held) {
+if (!block_held) &amp;&amp; (character_health &gt; 0){ //added death check
     if (blocking) {
         can_attack = true;
         can_block = true;
@@ -533,8 +536,8 @@ if (!stunned) {
                 can_attack = false;
                 can_block = false;
                 can_move = false;
-                var attack_speed = character_focus / 100;
-                if (attack_speed &lt; .5) attack_speed = .5;
+                var attack_speed = character_focus / 100 + .2;//minor tweaks for feel
+                if (attack_speed &lt; .7) attack_speed = .7;
                 character_focus -= (FIRST_ATTACK_FOCUS_COST + (attack_combo * SUCCESSIVE_ATTACK_FOCUS_MODIFIER))
                 swordID = instance_create(x, y, obj_charactersword); // create a sword and keep its ID to ignore collisions
                 swordID.attack_speed = attack_speed;
@@ -621,6 +624,7 @@ if (!stunned) {
                     alarm[7] = QUICKSTEP_COOLDOWN;
                     character_focus -= QUICKSTEP_FOCUS_COST;
                     audio_play_sound(snd_dash, 1, false);
+                    
                 }
             }
         } // end if (can_quickstep)
@@ -757,6 +761,7 @@ if (other.id != swordID) {
     if (!invincible) {
         if (alarm[4] &gt;= BLOCK_RAISE_DELAY - PARRY_THRESHOLD) {
             // successful parry
+            audio_play_sound(snd_parry, 100, false) 
             attackerID = other.parentID
             // pushback attacker
             with (attackerID) {
@@ -781,7 +786,7 @@ if (other.id != swordID) {
             with (other) instance_destroy();
     
             // increase my stamina
-            character_focus += 10;
+            character_focus += 20;
             
             // reset block-related states
             block_held = false;
@@ -813,6 +818,8 @@ if (other.id != swordID) {
                 // dead.  freeze and set a timer for cleanup event
                 can_move = false;
                 can_attack = false;
+                alarm[4] = -1;//don't be shielding
+                alarm[5] = -1;
                 var i;
                 for (i = 0; i &lt; 12; i++){
                     alarm[i] = -1;

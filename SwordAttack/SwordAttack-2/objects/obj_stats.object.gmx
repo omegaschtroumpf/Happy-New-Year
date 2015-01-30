@@ -62,7 +62,11 @@ remaining_bar_width = remaining_percentage * total_bar_width;
 used_bar_width = used_percentage * total_bar_width;
 
 // draw remaining focus bar in green
-draw_rectangle_colour(100, 100, 100 + remaining_bar_width, 80, c_green, c_green, c_green, c_green, false);
+if character_health == 2 {
+    draw_rectangle_colour(100, 100, 100 + remaining_bar_width, 80, c_green, c_green, c_green, c_green, false);
+}else {
+    draw_rectangle_colour(100, 100, 100 + remaining_bar_width, 80, c_yellow, c_yellow, c_yellow, c_yellow, false);
+    }
 // draw used focus bar in red
 if (used_bar_width &gt; 0)
     draw_rectangle_colour(100 + remaining_bar_width, 100, 100 + remaining_bar_width + used_bar_width, 80, c_red, c_red, c_red, c_red, false);

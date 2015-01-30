@@ -33,6 +33,9 @@ if (focus_regen) {
         character_focus = 0;
         focus_regen = false;
         alarm[9] = FOCUS_REGEN_PENALTY;
+        //break block if stamina is depleted
+        block_lock = false;
+        block_held = false;
     }
     else if (character_focus &lt; character_focus_max) {
         if (character_focus &lt; FOCUS_RATE_THRESHOLD) character_focus += FOCUS_REGEN_FAST;
@@ -82,7 +85,7 @@ if (!stunned || sword_lock) {
     // slash button - Right button
     shoulder_r_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderr);
     
-    if (keyboard_check(vk_space)) {
+    if (keyboard_check(vk_space)) || (keyboard_check(ord('X'))) {
         shoulder_r_pressed = 1;
     }  
     
@@ -90,10 +93,10 @@ if (!stunned || sword_lock) {
     shoulder_l_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderl);
     shoulder_l_released = gamepad_button_check_released(deviceID, gp_shoulderl);
     
-    if (keyboard_check_pressed(ord('C'))) {
+    if (keyboard_check_pressed(ord('C')) || keyboard_check_pressed(vk_alt)) {
         shoulder_l_pressed = 1;
     }
-    if (keyboard_check_released(ord('C'))) {
+    if (keyboard_check_released(ord('C')) || keyboard_check_pressed(vk_alt)) {
         shoulder_l_released = 1;
     }
     
@@ -207,6 +210,7 @@ if (!stunned) {
                     can_block = false;
                     alarm[7] = QUICKSTEP_COOLDOWN;
                     character_focus -= QUICKSTEP_FOCUS_COST;
+                    audio_play_sound(snd_dash, 1, false);
                 }
             }
         } // end if (can_quickstep)
