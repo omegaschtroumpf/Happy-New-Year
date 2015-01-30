@@ -207,6 +207,7 @@ if (!stunned) {
                     can_block = false;
                     alarm[7] = QUICKSTEP_COOLDOWN;
                     character_focus -= QUICKSTEP_FOCUS_COST;
+                    audio_play_sound(snd_dash, 1, false);
                 }
             }
         } // end if (can_quickstep)

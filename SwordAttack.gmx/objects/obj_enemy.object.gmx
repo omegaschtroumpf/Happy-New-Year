@@ -59,15 +59,29 @@ else {
     }
 }
 
-
 if (!stunned || sword_lock) {
     // here's where the AI happens for right now
+    shoulder_r_pressed = false;
+    if (character_focus &lt; 100 &amp;&amp; alarm[11] &lt; 0) { // focus less than 30 or some RETREAT_FOCUS_THRESHOLD you define
+        // time to start moving away
+        alarm[11] = 20;  // do it for next 15 steps
+        random_move = random(180);
 
-    if (point_distance(x,y,targetID.x,targetID.y) &lt; 250 &amp;&amp; (random(100) &lt; 5)) shoulder_r_pressed = true;
-    else shoulder_r_pressed = false;
-    x_axisL = dcos(image_angle);
-    y_axisL = dsin(image_angle) * -1;
+    }
+    if (alarm[11] &gt; 0) {
+        // i gotta keep moving
+        x_axisL = dcos(image_angle - 90 - random_move);
+        y_axisL = dsin(image_angle - 90 - random_move) * -1;
+        
+    }
+    else {
+        if (point_distance(x,y,targetID.x,targetID.y) &lt; 250 &amp;&amp; (random(100) &lt; 5)) shoulder_r_pressed = true;
+        else shoulder_r_pressed = false;
     
+        x_axisL = dcos(image_angle);
+        y_axisL = dsin(image_angle) * -1;
+    }
+            
 }
 
 if (!stunned) {
