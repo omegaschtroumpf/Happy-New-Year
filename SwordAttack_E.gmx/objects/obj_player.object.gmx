@@ -124,11 +124,11 @@ if (!stunned) {
                 can_attack = false;
                 can_block = false;
                 can_move = false;
-                var attack_speed = character_focus / 100;
-                if (attack_speed &lt; .5) attack_speed = .5;
+                var attack_speed = character_focus / 60;
+                if (attack_speed &lt; .85) attack_speed = .85;
                 character_focus -= (FIRST_ATTACK_FOCUS_COST + (attack_combo * SUCCESSIVE_ATTACK_FOCUS_MODIFIER))
                 swordID = instance_create(x, y, obj_charactersword); // create a sword and keep its ID to ignore collisions
-                swordID.attack_speed = attack_speed;
+                swordID.speed_multiplier = attack_speed //swordID.attack_speed = attack_speed;
                 swordID.image_speed *= attack_speed;
                 /*
                 Reference an object with it's object ID
