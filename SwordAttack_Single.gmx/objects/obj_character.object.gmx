@@ -131,6 +131,7 @@ swordID = 0;
 controlID = 0;
 statsID = 0;
 enemiesID = 0;
+softTargetAngles = ds_list_create();
 
 
 // player controller input variables
@@ -175,6 +176,7 @@ if (swordID) {
 with (swordID) instance_destroy();
 }
 
+ds_list_destroy(softTargetAngles);
 </string>
           </argument>
         </arguments>
@@ -455,6 +457,7 @@ if (!blocking) {
             <string>/// Attack Timer Reset
 can_attack = true;
 can_block = true;
+can_target = true;
 attack_penalty = false;
 </string>
           </argument>
@@ -544,6 +547,7 @@ if (!stunned) {
                 can_attack = false;
                 can_block = false;
                 can_move = false;
+                can_target = false;
                 var attack_speed = character_focus / 100 + .2;//minor tweaks for feel
                 if (attack_speed &lt; .7) attack_speed = .7;
                 character_focus -= (FIRST_ATTACK_FOCUS_COST + (attack_combo * SUCCESSIVE_ATTACK_FOCUS_MODIFIER))
