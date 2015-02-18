@@ -19,6 +19,7 @@
 player1 = instance_create(256, 256, obj_player);
 
 enemies = ds_list_create();
+player1.enemiesID = enemies;
 // IF ROOM CHANGES, DESTROY enemies
 
 ds_list_add(enemies, instance_create(600, 200, obj_enemyDUMB));
@@ -46,7 +47,7 @@ player1.deviceID = 0;
 
 control = instance_create(-50, -50, obj_control);
 control.player1 = player1;
-control.enemies = enemies;
+// control.enemiesID = enemies;
 
 
 
@@ -56,7 +57,7 @@ player1.controlID = control;
 
 stats = instance_create(0,0,obj_stats);
 stats.player1 = player1;
-stats.enemies = enemies;
+//stats.enemiesID = enemies;
 
 player1.statsID = stats;
 

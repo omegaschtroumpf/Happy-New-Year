@@ -88,7 +88,8 @@ if (!stunned || sword_lock) {
     
     if (keyboard_check(vk_space)) || (keyboard_check(ord('X'))) {
         shoulder_r_pressed = 1;
-    }  
+    }
+    else shoulder_r_pressed = 0;
     
     // blcok button - Left button
     shoulder_l_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderl);
@@ -97,9 +98,11 @@ if (!stunned || sword_lock) {
     if (keyboard_check_pressed(ord('C')) || keyboard_check_pressed(vk_alt)) {
         shoulder_l_pressed = 1;
     }
+    else shoulder_l_pressed = 0;
     if (keyboard_check_released(ord('C')) || keyboard_check_pressed(vk_alt)) {
         shoulder_l_released = 1;
     }
+    else shoulder_l_released = 0;
     
     // dash button - XBOX A Button
     dash_button_pressed = gamepad_button_check_pressed(deviceID, gp_face1);
@@ -107,12 +110,21 @@ if (!stunned || sword_lock) {
     if (keyboard_check(ord('V'))) {
         dash_button_pressed = 1;
     }
+    else dash_button_pressed = 0;
     
     // target cancel button
-    target_cancel_button_pressed = gamepad_button_check_pressed(deviceID, gp_stickr);
+    target_cancel_button_pressed = gamepad_button_check_pressed(deviceID, gp_stickr) || gamepad_button_check_pressed(deviceID, gp_stickl);
     
+    if (keyboard_check(ord('G'))) {
+        target_cancel_button_pressed = 1;
+    }
+    else target_cancel_button_pressed = 0;
+    
+    // target keyboard button
     if (keyboard_check(ord('T'))) {
-        target_cancel_Button_pressed = 1;
+        target_button_pressed = 1;
+    }
+    else target_button_pressed = 0;
 }
 
 if (!stunned) {
@@ -123,6 +135,10 @@ if (!stunned) {
             targetID = 0;
             image_angle = point_direction(0, 0, x_axisR, y_axisR);
         }
+        if (target_button_pressed) {
+            soft_target = true;
+            targetID = 0;
+        }
         if (target_cancel_button_pressed) {
             soft_target = false;
             targetID = 0;
@@ -130,35 +146,44 @@ if (!stunned) {
         if (soft_target) {
             // look for enemies and calculate a new image_angle
             // go through the enemies' positions and see if they are in my line of sight
-            // N.B. decide whether to reference room to get enemies collection.  Maybe that makes sense rather than keeping my own reference
-            num = ds_list_size(enemies);
+            num = ds_list_size(enemiesID);
             vector_x = 0;
             vector_y = 0;
+            see_enemies = false;
             for (i = 0; i &lt; num; i++) {
-                enemy = ds_list_find_value(enemies, i);
-                // only want direction now, will get distance if I need it
-                enemy_direction = point_direction(x, y, enemy.x, enemy.y);
-                if (enemy_direction &lt; (image_angle + 23) &amp;&amp; enemy_direction &gt; (image_angle - 23)) {
-                    // in my line of sight, add to my vector calculations
-                    x_diff = enemy.x - x;
-                    y_diff = enemy.y - y;
-                    // distance to enemy will weight the vectoring, the farther away, the lower the influence an enemy has on targeting
-                    enemy_distance = point_distance(x, y, enemy.x, enemy.y);
-                    vector_x += (x - enemy.x) / enemy_distance;
-                    vector_y += (y - enemy.y) / enemy_distance;
+                enemy = ds_list_find_value(enemiesID, i);
+                enemy_distance = point_distance(x, y, enemy.x, enemy.y);
+                // only do more calculation with this enemy if he is in range
+                if (enemy_distance &lt;= TARGET_MAX_DISTANCE) {
+                    enemy_direction = point_direction(x, y, enemy.x, enemy.y);
+                    angle_diff = angle_difference(image_angle, enemy_direction);
+                    if ((angle_diff &lt; TARGET_ANGLE / 2) &amp;&amp; angle_diff &gt; (TARGET_ANGLE / -2)) {
+                        // in my line of sight, add to my vector calculations
+                        see_enemies = true;
+                        // distance to enemy will weight the vectoring, the farther away, the lower the influence an enemy has on targeting
+                        // enemy.x - x because I want to point from me at relative 0,0 towards enemy
+                        vector_x += (enemy.x - x) / sqr(sqr(enemy_distance));
+                        vector_y += (enemy.y - y) / sqr(sqr(enemy_distance));
+                    }
                 }
             }
-            // now I have a vector for the weighted direction towards enemies.
-            image_angle = point_direction(0, 0, vector_x, vector_y);
+            // if I saw enemies, adjust my angle to face them.  If not, I'll keep my angle from right stick
+            if (see_enemies) {
+                // now I have a vector for the weighted direction towards enemies.
+                image_angle = point_direction(0, 0, vector_x, vector_y);
+            }
+            else {
+                soft_target = false;
+            }
         }
         // If I have a specific enemy target, just look at him
         else if (targetID) {            
-            image_angle = point_direction(x, y,targetID.x,targetID.y);
+            image_angle = point_direction(x, y, targetID.x,targetID.y);
         }
         // I aint got no target
         else {
             // what the hell direction am I moving in then?
-            image_angle = point_direction(0, 0, x_axisL, x_axisR);
+            if (x_axisL != 0 || y_axisL != 0) image_angle = point_direction(0, 0, x_axisL, y_axisL);
         }
     }
     

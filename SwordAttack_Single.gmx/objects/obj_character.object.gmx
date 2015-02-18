@@ -30,6 +30,8 @@
 // Character constants
 MOVEMENT_SPEED = 3;
 KNOCKBACK = 5;
+TARGET_ANGLE = 90;
+TARGET_MAX_DISTANCE = 400;
 FOCUS_RATE_THRESHOLD = 50;
 FOCUS_MAX = 100;
 FOCUS_REGEN = .78; // 14 / 30 // ~14 PER SECOND (orig 7/30)
@@ -116,6 +118,7 @@ blocking = false; // set to true when block is raised
 block_lock = false; // ensures the minimum block time
 invincible = false; // this stays set for the greater of minimum block time, or the time that the player holds the block button beyond minimum block time
 quickstep_collided = false;
+soft_target = false;
 
 /*
 continue_attack = false;
@@ -127,6 +130,7 @@ targetID = 0;
 swordID = 0;
 controlID = 0;
 statsID = 0;
+enemiesID = 0;
 
 
 // player controller input variables
@@ -139,6 +143,9 @@ shoulder_r_pressed = 0;
 shoulder_l_pressed = 0;
 shoulder_l_released = 0;
 dash_button_pressed = 0;
+target_button_pressed = 0;
+target_cancel_button_pressed = 0;
+
 
 </string>
           </argument>
