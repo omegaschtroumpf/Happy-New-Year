@@ -101,33 +101,65 @@ if (!stunned || sword_lock) {
         shoulder_l_released = 1;
     }
     
-    
     // dash button - XBOX A Button
     dash_button_pressed = gamepad_button_check_pressed(deviceID, gp_face1);
     
     if (keyboard_check(ord('V'))) {
         dash_button_pressed = 1;
-    }  
+    }
+    
+    // target cancel button
+    target_cancel_button_pressed = gamepad_button_check_pressed(deviceID, gp_stickr);
+    
+    if (keyboard_check(ord('T'))) {
+        target_cancel_Button_pressed = 1;
 }
 
 if (!stunned) {
-
-    // if my target is an obj_playerTarget, I will recalculate it's position here based on my current image_angle
-    if (targetID.object_index == obj_playerTarget) {
-        // go through the enemies' positions and see if they are in my line of sight
-        num = ds_list_size(enemies);
-        for (i = 0; i &lt; num; i++) {
-            enemy = ds_list_find_value(enemies, i);
-            enemy_direction = point_direction(x, y, enemy.x, enemy.y);
-            if (enemy_direction &lt; (image_angle + 23) &amp;&amp; enemy_direction &gt; (image_angle - 23)) {
-                
-            }
-        }
-        
-    }
-
     if (can_target) {
-        image_angle = point_direction(x,y,targetID.x,targetID.y);
+        // if right stick input without cancelling target, point that way as a starting point for soft targeting
+        if ((x_axisR != 0 || y_axisR != 0) &amp;&amp; !target_cancel_button_pressed) {
+            soft_target = true;
+            targetID = 0;
+            image_angle = point_direction(0, 0, x_axisR, y_axisR);
+        }
+        if (target_cancel_button_pressed) {
+            soft_target = false;
+            targetID = 0;
+        }
+        if (soft_target) {
+            // look for enemies and calculate a new image_angle
+            // go through the enemies' positions and see if they are in my line of sight
+            // N.B. decide whether to reference room to get enemies collection.  Maybe that makes sense rather than keeping my own reference
+            num = ds_list_size(enemies);
+            vector_x = 0;
+            vector_y = 0;
+            for (i = 0; i &lt; num; i++) {
+                enemy = ds_list_find_value(enemies, i);
+                // only want direction now, will get distance if I need it
+                enemy_direction = point_direction(x, y, enemy.x, enemy.y);
+                if (enemy_direction &lt; (image_angle + 23) &amp;&amp; enemy_direction &gt; (image_angle - 23)) {
+                    // in my line of sight, add to my vector calculations
+                    x_diff = enemy.x - x;
+                    y_diff = enemy.y - y;
+                    // distance to enemy will weight the vectoring, the farther away, the lower the influence an enemy has on targeting
+                    enemy_distance = point_distance(x, y, enemy.x, enemy.y);
+                    vector_x += (x - enemy.x) / enemy_distance;
+                    vector_y += (y - enemy.y) / enemy_distance;
+                }
+            }
+            // now I have a vector for the weighted direction towards enemies.
+            image_angle = point_direction(0, 0, vector_x, vector_y);
+        }
+        // If I have a specific enemy target, just look at him
+        else if (targetID) {            
+            image_angle = point_direction(x, y,targetID.x,targetID.y);
+        }
+        // I aint got no target
+        else {
+            // what the hell direction am I moving in then?
+            image_angle = point_direction(0, 0, x_axisL, x_axisR);
+        }
     }
     
     // player attacking
