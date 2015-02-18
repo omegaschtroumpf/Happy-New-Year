@@ -128,7 +128,7 @@ if (!stunned || sword_lock) {
 }
 
 if (!stunned) {
-    if (can_target) {
+    if (can_target &amp;&amp; !swordID) {
         // if right stick input without cancelling target, point that way as a starting point for soft targeting
         if ((x_axisR != 0 || y_axisR != 0) &amp;&amp; !target_cancel_button_pressed) {
             soft_target = true;

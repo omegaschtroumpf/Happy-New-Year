@@ -405,6 +405,7 @@ attack_combo = 0;
             <kind>1</kind>
             <string>/// Movement Reset After Attack
 can_move = true;
+can_target = true;
 </string>
           </argument>
         </arguments>
@@ -457,7 +458,6 @@ if (!blocking) {
             <string>/// Attack Timer Reset
 can_attack = true;
 can_block = true;
-can_target = true;
 attack_penalty = false;
 </string>
           </argument>
