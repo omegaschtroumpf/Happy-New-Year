@@ -31,7 +31,7 @@
 event_inherited();
 
 // player-specific constants
-CURSOR_SPEED = 5;
+CURSOR_SPEED = 10;
 
 // player specific variables
 cursorID = 0;

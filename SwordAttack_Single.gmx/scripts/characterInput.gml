@@ -17,80 +17,71 @@ switch (object_index) {
 #define playerInput
 /// playerInput() 
 
-// player input
-// left stick input
-x_axisL = gamepad_axis_value(deviceID, gp_axislh); // -1 .. 1
-y_axisL = gamepad_axis_value(deviceID, gp_axislv);
-x_axisR = gamepad_axis_value(deviceID, gp_axisrh);
-y_axisR = gamepad_axis_value(deviceID, gp_axisrv);
+if (gamepad_is_connected(deviceID)) { 
+    // Gamepad Input
+    
+    // left stick input
+    x_axisL = gamepad_axis_value(deviceID, gp_axislh); // -1 .. 1
+    y_axisL = gamepad_axis_value(deviceID, gp_axislv);
+    x_axisR = gamepad_axis_value(deviceID, gp_axisrh);
+    y_axisR = gamepad_axis_value(deviceID, gp_axisrv);
 
-if (keyboard_check(vk_right)) {
-    x_axisL = 1;
+    // slash button - Right button
+    shoulder_r_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderr);
+
+    // blcok button - Left button
+    shoulder_l_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderl);
+    shoulder_l_released = gamepad_button_check_released(deviceID, gp_shoulderl);
+    
+    // dash button - XBOX A Button
+    dash_button_pressed = gamepad_button_check_pressed(deviceID, gp_face1);
+    
+    // target cancel button
+    target_cancel_button_pressed = gamepad_button_check_pressed(deviceID, gp_face3) || gamepad_button_check_pressed(deviceID, gp_stickl);
+    
+    // cursor button
+    cursor_button_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderlb);
+    cursor_button_released = gamepad_button_check_released(deviceID, gp_shoulderlb);
 }
-if (keyboard_check(vk_left)) {
-    x_axisL = -1;
+else {
+    x_axisL = 0;
+    y_axisL = 0;
+    // Keyboard Input
+    if (keyboard_check(vk_right)) {
+        x_axisL = 1;
+    }
+    if (keyboard_check(vk_left)) {
+        x_axisL = -1;
+    }
+    if (keyboard_check(vk_up)) {
+        y_axisL = -1;
+    }
+    if (keyboard_check(vk_down)) {
+        y_axisL = 1;
+    }
+    
+    // slash button - Right button
+    shoulder_r_pressed = keyboard_check(vk_space);
+
+    // block button - Left button
+    shoulder_l_pressed = keyboard_check_pressed(ord('C'));
+    shoulder_l_released = keyboard_check_released(ord('C'));
+
+    // dash button - XBOX A Button
+    dash_button_pressed = keyboard_check(ord('V'));
+    
+    // target cancel button
+    target_cancel_button_pressed = keyboard_check(ord('G'));
+    
+    // target keyboard button
+    target_button_pressed = keyboard_check(ord('T'));
+    
+    // cursor keyboard button
+    cursor_button_pressed = keyboard_check(ord('Y'));
+    
+    cursor_button_released = keyboard_check_released(ord('Y'));
+           
 }
-if (keyboard_check(vk_up)) {
-    y_axisL = -1;
-}
-if (keyboard_check(vk_down)) {
-    y_axisL = 1;
-}    
-
-// slash button - Right button
-shoulder_r_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderr);
-
-if (keyboard_check(vk_space)) || (keyboard_check(ord('X'))) {
-    shoulder_r_pressed = 1;
-}
-else shoulder_r_pressed = 0;
-
-// blcok button - Left button
-shoulder_l_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderl);
-shoulder_l_released = gamepad_button_check_released(deviceID, gp_shoulderl);
-
-if (keyboard_check_pressed(ord('C')) || keyboard_check_pressed(vk_alt)) {
-    shoulder_l_pressed = 1;
-}
-else shoulder_l_pressed = 0;
-if (keyboard_check_released(ord('C')) || keyboard_check_pressed(vk_alt)) {
-    shoulder_l_released = 1;
-}
-else shoulder_l_released = 0;
-
-// dash button - XBOX A Button
-dash_button_pressed = gamepad_button_check_pressed(deviceID, gp_face1);
-
-if (keyboard_check(ord('V'))) {
-    dash_button_pressed = 1;
-}
-else dash_button_pressed = 0;
-
-// target cancel button
-target_cancel_button_pressed = gamepad_button_check_pressed(deviceID, gp_stickr) || gamepad_button_check_pressed(deviceID, gp_stickl);
-
-if (keyboard_check(ord('G'))) {
-    target_cancel_button_pressed = 1;
-}
-else target_cancel_button_pressed = 0;
-
-// target keyboard button
-if (keyboard_check(ord('T'))) {
-    target_button_pressed = 1;
-}
-else target_button_pressed = 0;
-
-// cursor button
-cursor_button_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderlb);
-cursor_button_released = gamepad_button_check_released(deviceID, gp_shoulderlb);
-
-// cursor keyboard button
-if (keyboard_check(ord('Y'))) {
-    cursor_button_pressed = 1;
-}
-else cursor_button_pressed = 0;
-
-cursor_button_released = keyboard_check_released(ord('Y'));
 
 #define enemyBasicAI
 /// enemyBasicAI() 
