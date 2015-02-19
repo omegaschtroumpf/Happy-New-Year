@@ -80,6 +80,18 @@ if (keyboard_check(ord('T'))) {
 }
 else target_button_pressed = 0;
 
+// cursor button
+cursor_button_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderlb);
+cursor_button_released = gamepad_button_check_released(deviceID, gp_shoulderlb);
+
+// cursor keyboard button
+if (keyboard_check(ord('Y'))) {
+    cursor_button_pressed = 1;
+}
+else cursor_button_pressed = 0;
+
+cursor_button_released = keyboard_check_released(ord('Y'));
+
 #define enemyBasicAI
 /// enemyBasicAI() 
 

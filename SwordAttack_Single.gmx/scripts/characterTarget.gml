@@ -1,5 +1,5 @@
 #define characterStepHelper
-/// characterStepHelper()
+/// characterStepHelper() 
 
 // Input, Movement, Attacking, Blocking
 
@@ -34,7 +34,7 @@ characterSwordMove()
 characterBlock()
 
 #define characterFocusRegen
-/// characterFocusRegen()
+/// characterFocusRegen() 
 
 // Regenerate Focus
 if (focus_regen) {
@@ -53,7 +53,7 @@ if (focus_regen) {
 }
 
 #define characterQSFriction
-/// characterQSFriction()
+/// characterQSFriction() 
 
 // if quickstepping increase friction
 if (speed > 0) {
@@ -73,7 +73,7 @@ else {
 
 
 #define characterTarget
-/// characterTarget
+/// characterTarget 
 
 // Soft-Targeting, TargetID Targeting, and no target image direction
 
@@ -140,7 +140,7 @@ if (!stunned && can_target && !swordID) {
 }
 
 #define characterAttack
-/// characterAttack()
+/// characterAttack() 
 
 // player attacking
 if (!stunned && shoulder_r_pressed) {
@@ -199,7 +199,7 @@ if (!stunned && shoulder_r_pressed) {
 }
 
 #define characterMove
-/// characterMove
+/// characterMove 
 
 // Quickstepping and regular movement
 
@@ -268,7 +268,7 @@ if (!stunned && can_move) {
 }
 
 #define characterSwordMove
-/// characterSwordMove
+/// characterSwordMove 
 
 // player and sword moving
 if (!stunned && swordID) {
@@ -328,7 +328,7 @@ if (!stunned && swordID) {
 }
 
 #define characterBlock
-/// characterBlock()
+/// characterBlock() 
 
 // Blocking states
 if(!stunned) {

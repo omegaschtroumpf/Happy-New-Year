@@ -18,6 +18,7 @@
     <sprite>sprites\spr_sword</sprite>
     <sprite>sprites\spr_shield</sprite>
     <sprite>sprites\spr_armor</sprite>
+    <sprite>sprites\spr_cursor</sprite>
   </sprites>
   <backgrounds name="background">
     <background>background\bg_main</background>
@@ -33,11 +34,16 @@
       <object>objects\obj_control</object>
       <object>objects\obj_stats</object>
     </objects>
+    <object>objects\obj_targetable</object>
     <objects name="Characters">
       <object>objects\obj_character</object>
       <object>objects\obj_charactersword</object>
-      <object>objects\obj_player</object>
+      <objects name="Player">
+        <object>objects\obj_player</object>
+        <object>objects\obj_cursor</object>
+      </objects>
       <objects name="NPCs">
+        <object>objects\obj_npc</object>
         <object>objects\obj_enemy</object>
         <object>objects\obj_enemyDumb</object>
       </objects>

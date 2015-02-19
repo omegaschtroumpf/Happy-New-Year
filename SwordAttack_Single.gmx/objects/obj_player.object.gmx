@@ -7,7 +7,99 @@
   <persistent>0</persistent>
   <parentName>obj_character</parentName>
   <maskName>&lt;undefined&gt;</maskName>
-  <events/>
+  <events>
+    <event eventtype="0" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Player specific states and functionality
+
+// Call the obj_character create first
+event_inherited();
+
+// player-specific constants
+CURSOR_SPEED = 5;
+
+// player specific variables
+cursorID = 0;
+
+// input variables
+cursor_button_pressed = 0;
+cursor_button_released = 0;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Handle special player activity
+
+if (!stunned || sword_lock) {
+    playerInput();
+}
+
+if (!stunned) {
+    if (can_target &amp;&amp; can_move &amp;&amp; !blocking &amp;&amp; cursor_button_pressed) {
+        // need to handle case of block_raise alarms and state variables
+        
+        
+        // create cursor if it doesn't exist
+        if (!cursorID) {
+            if (targetID) cursorID = instance_create(targetID.x, targetID.y, obj_cursor);
+            else cursorID = instance_create(x, y, obj_cursor);
+        }
+        // now just move it around
+        cursorID.x += x_axisL * CURSOR_SPEED;
+        cursorID.y += y_axisL * CURSOR_SPEED;
+        // can also regenerate focus, but no other
+        characterFocusRegen();
+    }
+    else {
+        if (cursor_button_released) {
+            targetID = collision_point(cursorID.x, cursorID.y, obj_targetable,false, true);
+            with(cursorID) instance_destroy();
+            cursorID = 0;
+            soft_target = false;
+        }
+        // call parent step to deal with other input normally
+        event_inherited();
+    }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+  </events>
   <PhysicsObject>0</PhysicsObject>
   <PhysicsObjectSensor>0</PhysicsObjectSensor>
   <PhysicsObjectShape>0</PhysicsObjectShape>

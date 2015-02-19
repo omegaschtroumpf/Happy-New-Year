@@ -23,7 +23,7 @@ player1.enemiesID = enemies;
 // IF ROOM CHANGES, DESTROY enemies
 
 ds_list_add(enemies, instance_create(600, 200, obj_enemyDumb));
-ds_list_add(enemies, instance_create(500, 250, obj_enemy));
+ds_list_add(enemies, instance_create(500, 250, obj_enemyDumb));
 ds_list_add(enemies, instance_create(600, 300, obj_enemyDumb));
 ds_list_add(enemies, instance_create(100, 900, obj_enemyDumb));
 ds_list_add(enemies, instance_create(300, 900, obj_enemyDumb));

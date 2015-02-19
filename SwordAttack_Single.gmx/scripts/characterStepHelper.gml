@@ -25,13 +25,13 @@ characterTarget();
 characterAttack();
 
 // move based on character input    
-characterMove()
+characterMove();
 
 // move based on swinging a sword
-characterSwordMove()
+characterSwordMove();
 
 // blocking
-characterBlock()
+characterBlock();
 
 #define characterFocusRegen
 /// characterFocusRegen() 

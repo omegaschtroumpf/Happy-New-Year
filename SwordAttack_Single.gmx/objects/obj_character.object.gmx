@@ -5,7 +5,7 @@
   <visible>-1</visible>
   <depth>0</depth>
   <persistent>0</persistent>
-  <parentName>&lt;undefined&gt;</parentName>
+  <parentName>obj_targetable</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
     <event eventtype="0" enumb="0">
@@ -25,9 +25,9 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Initialize Variables
+            <string>/// Character constants and variables
 
-// Character constants
+// constants
 MOVEMENT_SPEED = 3;
 KNOCKBACK = 5;
 TARGET_ANGLE = 90;
@@ -87,8 +87,6 @@ BLOCKING_IMAGE = 2;
 CHARACTER_KILLED_ROOM_SPEED = 15;
 NORMAL_ROOM_SPEED = 30;
 
-random_move = 0; // 1-29
-killed = false;
 
 // Sprite property assignments - won't be needed once we have custom sprites
 image_xscale = 3;
@@ -96,8 +94,7 @@ image_yscale = 3;
 image_speed = 0;
 image_angle = direction;
 
-
-// character state variables
+// character variables
 character_health = 2; //currently just tracking player hits
 character_focus_max = FOCUS_MAX; // 100 to start.  Could get hit and drop to 70.
 character_focus = FOCUS_MAX; // this is for later
@@ -121,6 +118,9 @@ block_lock = false; // ensures the minimum block time
 invincible = false; // this stays set for the greater of minimum block time, or the time that the player holds the block button beyond minimum block time
 quickstep_collided = false;
 soft_target = false;
+
+random_move = 0; // 1-29
+killed = false;
 
 /*
 continue_attack = false;
