@@ -57,7 +57,7 @@ score2 = 0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/*
+            <string>
 
 p1_focus_max = player1.FOCUS_MAX;
 p1_focus = player1.character_focus;
@@ -72,10 +72,10 @@ remaining_bar_width = remaining_percentage * total_bar_width;
 used_bar_width = used_percentage * total_bar_width;
 
 // draw remaining focus bar in green
-draw_rectangle_colour(room_width - 600 - total_bar_width, 100, room_width - 600 - used_bar_width, 80, c_green, c_green, c_green, c_green, false);
+draw_rectangle_colour(player1.x - total_bar_width, player1.y + 100, player1.x - used_bar_width, player1.y + 80, c_green, c_green, c_green, c_green, false);
 // draw used focus bar in red
 if (used_bar_width &gt; 0)
-    draw_rectangle_colour(room_width - 600 - used_bar_width, 100, room_width - 600, 80, c_red, c_red, c_red, c_red, false);
+    draw_rectangle_colour(player1.x - used_bar_width, player1.y + 100, player1.x, player1.y + 80, c_red, c_red, c_red, c_red, false);
 
 /*
 total_bar_width = p2_focus_max;

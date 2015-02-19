@@ -12,18 +12,18 @@ switch (object_index) {
         enemyDumbDeath();
     break;
     default: // no input is set
-} 
+}
 
 #define playerDeath
 /// playerDeath()
 
-game_restart(); 
+game_restart();
 
 #define enemyDeath
 /// enemyDeath()
 // remove myself from the room's enemies list
-ds_list_delete(enemiesID, ds_list_find_index(enemiesID, id)); 
+ds_list_delete(enemiesID, ds_list_find_index(enemiesID, id));
 
 #define enemyDumbDeath
 /// enemyDumbDeath()
-enemyDeath(); 
+enemyDeath();

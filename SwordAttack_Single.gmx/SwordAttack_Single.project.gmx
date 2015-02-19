@@ -24,8 +24,9 @@
   </backgrounds>
   <paths name="paths"/>
   <scripts name="scripts">
-    <script>scripts\getCharacterInput.gml</script>
+    <script>scripts\characterInput.gml</script>
     <script>scripts\characterDeath.gml</script>
+    <script>scripts\characterStepHelper.gml</script>
   </scripts>
   <objects name="objects">
     <objects name="Control">
