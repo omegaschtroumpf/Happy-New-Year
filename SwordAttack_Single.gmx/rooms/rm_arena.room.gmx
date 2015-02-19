@@ -22,16 +22,19 @@ enemies = ds_list_create();
 player1.enemiesID = enemies;
 // IF ROOM CHANGES, DESTROY enemies
 
-ds_list_add(enemies, instance_create(600, 200, obj_enemyDUMB));
-ds_list_add(enemies, instance_create(500, 250, obj_enemyDUMB));
-ds_list_add(enemies, instance_create(600, 300, obj_enemyDUMB));
-ds_list_add(enemies, instance_create(100, 900, obj_enemyDUMB));
-ds_list_add(enemies, instance_create(300, 900, obj_enemyDUMB));
+ds_list_add(enemies, instance_create(600, 200, obj_enemyDumb));
+ds_list_add(enemies, instance_create(500, 250, obj_enemy));
+ds_list_add(enemies, instance_create(600, 300, obj_enemyDumb));
+ds_list_add(enemies, instance_create(100, 900, obj_enemyDumb));
+ds_list_add(enemies, instance_create(300, 900, obj_enemyDumb));
+
+inert = instance_create(700, 250, obj_armor);
 
 num = ds_list_size(enemies);
 for (i = 0; i &lt; num; i++) {
     enemy = ds_list_find_value(enemies, i);
     enemy.targetID = player1;
+    enemy.enemiesID = enemies;
 }
 
 

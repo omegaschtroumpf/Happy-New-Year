@@ -57,7 +57,9 @@ score2 = 0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>p1_focus_max = player1.FOCUS_MAX;
+            <string>/*
+
+p1_focus_max = player1.FOCUS_MAX;
 p1_focus = player1.character_focus;
 
 //p2_focus_max = player2.FOCUS_MAX;
@@ -88,11 +90,11 @@ draw_rectangle_colour(room_width - 100 - total_bar_width, 100, room_width - 100 
 if (used_bar_width &gt; 0)
     draw_rectangle_colour(room_width - 100 - used_bar_width, 100, room_width - 100, 80, c_red, c_red, c_red, c_red, false);
 */    
-    
+/*    
 //draw some score
 draw_text(room_width -200, 125,"Score:"+ string(score2))
 draw_text(room_width -700, 125,"Score:"+ string(score1)) 
-
+*/
 </string>
           </argument>
         </arguments>

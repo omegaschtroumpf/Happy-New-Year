@@ -17,22 +17,34 @@
     <sprite>sprites\spr_player2</sprite>
     <sprite>sprites\spr_sword</sprite>
     <sprite>sprites\spr_shield</sprite>
-    <sprite>sprites\spr_targetMarker</sprite>
+    <sprite>sprites\spr_armor</sprite>
   </sprites>
   <backgrounds name="background">
     <background>background\bg_main</background>
   </backgrounds>
   <paths name="paths"/>
+  <scripts name="scripts">
+    <script>scripts\getCharacterInput.gml</script>
+    <script>scripts\characterDeath.gml</script>
+  </scripts>
   <objects name="objects">
-    <object>objects\obj_character</object>
-    <object>objects\obj_control</object>
-    <object>objects\obj_charactersword</object>
-    <object>objects\obj_hard</object>
-    <object>objects\obj_stats</object>
-    <object>objects\obj_enemy</object>
-    <object>objects\obj_enemyDUMB</object>
-    <object>objects\obj_player</object>
-    <object>objects\obj_playerTarget</object>
+    <objects name="Control">
+      <object>objects\obj_control</object>
+      <object>objects\obj_stats</object>
+    </objects>
+    <objects name="Characters">
+      <object>objects\obj_character</object>
+      <object>objects\obj_charactersword</object>
+      <object>objects\obj_player</object>
+      <objects name="NPCs">
+        <object>objects\obj_enemy</object>
+        <object>objects\obj_enemyDumb</object>
+      </objects>
+    </objects>
+    <objects name="Inert">
+      <object>objects\obj_inert</object>
+      <object>objects\obj_armor</object>
+    </objects>
   </objects>
   <rooms name="rooms">
     <room>rooms\rm_arena</room>

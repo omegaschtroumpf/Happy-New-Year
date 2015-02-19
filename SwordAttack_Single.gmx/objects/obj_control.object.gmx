@@ -27,9 +27,7 @@
             <kind>1</kind>
             <string>/// Related Objects
 
-player1 = 0;
-player2 = 0;
-
+player = 0;
 enemies = 0;
 
 
@@ -56,6 +54,7 @@ enemies = 0;
           <argument>
             <kind>1</kind>
             <string>/// Sword Lock Expired
+/*
 show_message("sword lock expired");
 with (player1) {
     sword_lock = false;
@@ -76,7 +75,7 @@ with (player2) {
     stunned = true;
     alarm[8] = QUICKSTEP_LONG_STUN_DELAY;
 }
-
+*/
 </string>
           </argument>
         </arguments>
