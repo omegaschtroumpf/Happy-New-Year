@@ -40,7 +40,7 @@ if (gamepad_is_connected(deviceID)) {
     target_cancel_button_pressed = gamepad_button_check_pressed(deviceID, gp_face3) || gamepad_button_check_pressed(deviceID, gp_stickl);
     
     // cursor button
-    cursor_button_pressed = gamepad_button_check_pressed(deviceID, gp_shoulderlb);
+    cursor_button_pressed = gamepad_button_check(deviceID, gp_shoulderlb);
     cursor_button_released = gamepad_button_check_released(deviceID, gp_shoulderlb);
 }
 else {
@@ -61,20 +61,20 @@ else {
     }
     
     // slash button - Right button
-    shoulder_r_pressed = keyboard_check(vk_space);
+    shoulder_r_pressed = keyboard_check_pressed(vk_space);
 
     // block button - Left button
     shoulder_l_pressed = keyboard_check_pressed(ord('C'));
     shoulder_l_released = keyboard_check_released(ord('C'));
 
     // dash button - XBOX A Button
-    dash_button_pressed = keyboard_check(ord('V'));
+    dash_button_pressed = keyboard_check_pressed(ord('V'));
     
     // target cancel button
-    target_cancel_button_pressed = keyboard_check(ord('G'));
+    target_cancel_button_pressed = keyboard_check_pressed(ord('G'));
     
     // target keyboard button
-    target_button_pressed = keyboard_check(ord('T'));
+    target_button_pressed = keyboard_check_pressed(ord('T'));
     
     // cursor keyboard button
     cursor_button_pressed = keyboard_check(ord('Y'));

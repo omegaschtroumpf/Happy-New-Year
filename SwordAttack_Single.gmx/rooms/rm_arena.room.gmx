@@ -23,7 +23,7 @@ player1.enemiesID = enemies;
 // IF ROOM CHANGES, DESTROY enemies
 
 ds_list_add(enemies, instance_create(600, 200, obj_enemyDumb));
-ds_list_add(enemies, instance_create(500, 250, obj_enemyDumb));
+ds_list_add(enemies, instance_create(500, 250, obj_enemy));
 ds_list_add(enemies, instance_create(600, 300, obj_enemyDumb));
 ds_list_add(enemies, instance_create(100, 900, obj_enemyDumb));
 ds_list_add(enemies, instance_create(300, 900, obj_enemyDumb));
@@ -65,8 +65,8 @@ stats.player1 = player1;
 player1.statsID = stats;
 
 //set controller deadzones
-if gamepad_is_connected(0) gamepad_set_axis_deadzone(0, 0.05);
-if gamepad_is_connected(1) gamepad_set_axis_deadzone(1, 0.05);</code>
+if gamepad_is_connected(0) gamepad_set_axis_deadzone(0, 0.1);
+if gamepad_is_connected(1) gamepad_set_axis_deadzone(1, 0.1);</code>
   <enableViews>-1</enableViews>
   <clearViewBackground>-1</clearViewBackground>
   <clearDisplayBuffer>-1</clearDisplayBuffer>

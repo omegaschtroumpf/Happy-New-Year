@@ -36,6 +36,7 @@ FOCUS_RATE_THRESHOLD = 50;
 FOCUS_MAX = 100;
 FOCUS_REGEN = .78; // 14 / 30 // ~14 PER SECOND (orig 7/30)
 FOCUS_REGEN_FAST = .86; // 1 / 3 20 PER SECOND (original 1/3)
+FOCUS_PENALTY_THRESHOLD = 0;
 FOCUS_REGEN_PENALTY = 90; // when focus &lt; 0, # steps regen is suspended
 QUICKSTEP_SPEED_BASE = 15;
 QUICKSTEP_FORWARD_MULTIPLIER = 1.75;
@@ -62,8 +63,8 @@ ATTACK_PUSH_MULTIPLIER = .25;
 FIRST_ATTACK_CAN_ATTACK_DELAY = 1; // after attack is over
 FIRST_ATTACK_CAN_MOVE_DELAY = 7; // after attack is over
 FIRST_ATTACK_COMBO_DELAY = 5; // after attack is over
-FIRST_ATTACK_FOCUS_COST = 40; //orginal 20
-SUCCESSIVE_ATTACK_FOCUS_MODIFIER = 12;
+FIRST_ATTACK_FOCUS_COST = 35; //orginal 20
+SUCCESSIVE_ATTACK_FOCUS_MODIFIER = 10;
 /*
 SECOND_ATTACK_CAN_ATTACK_DELAY = 30;
 SECOND_ATTACK_CAN_MOVE_DELAY = 30;
@@ -73,7 +74,7 @@ SECOND_ATTACK_FOCUS_COST = 30;
 ATTACK_PENALTY_CAN_ATTACK_DELAY = 12;
 ATTACK_PENALTY_CAN_MOVE_DELAY = 12;
 BLOCK_RAISE_DELAY = 5;
-BLOCK_LOCK_DELAY = 12;
+BLOCK_LOCK_DELAY = 30;
 BLOCK_LOCK_EXTENSION = 8;
 BLOCK_FOCUS_COST = 45;
 PARRY_THRESHOLD = 4;
@@ -517,11 +518,16 @@ characterStepHelper();
             <string>/// Handle sword collision
 // make sure it's not my sword
 if (other.id != swordID) {
+    
+    effect_x_adj = sprite_xoffset * dcos(point_direction(x, y, other.x, other.y));
+    effect_y_adj = -sprite_yoffset * dsin(point_direction(x, y, other.x, other.y));
     if (!invincible) {
         if (alarm[4] &gt;= BLOCK_RAISE_DELAY - PARRY_THRESHOLD) {
             // successful parry
-            audio_play_sound(snd_parry, 100, false) 
-            attackerID = other.parentID
+            audio_play_sound(snd_parry, 100, false);
+            attackerID = other.parentID;
+            // STEEL!
+            effect_create_above(ef_spark, x + effect_x_adj, y + effect_y_adj, 1, c_yellow);
             // pushback attacker
             with (attackerID) {
                 quick_stepping = true;
@@ -575,6 +581,8 @@ if (other.id != swordID) {
             invincible = true;
             if (character_health == 0) {
                 // dead.  freeze and set a timer for cleanup event
+                // BLOOD!
+                effect_create_above(ef_firework, x + effect_x_adj / 2, y + effect_y_adj / 2, 1, c_red);
                 can_move = false;
                 can_attack = false;
                 alarm[4] = -1;//don't be shielding
@@ -587,7 +595,11 @@ if (other.id != swordID) {
                 // for fun, slow down room speed
                 rm_arena.room_speed = CHARACTER_KILLED_ROOM_SPEED;
             }
-            else alarm[1] = DAMAGE_DELAY;
+            else {
+                alarm[1] = DAMAGE_DELAY;
+                // BLOOD!
+                effect_create_above(ef_firework, x + effect_x_adj / 2, y + effect_y_adj / 2, 0, c_red);
+            }
             // sound when hit
             audio_play_sound(snd_hit, 1, false);
         }
@@ -598,7 +610,8 @@ if (other.id != swordID) {
             other.hit_blocked = true;
             character_focus -= BLOCK_FOCUS_COST;
             audio_play_sound(snd_block, 1, false);
-        }
+            // STEEL
+            effect_create_above(ef_spark, x + effect_x_adj, y + effect_y_adj, 1, c_yellow);        }
         // ensure block lock
         if (alarm[5] &lt; BLOCK_LOCK_EXTENSION) {
             block_lock = true;

@@ -38,7 +38,7 @@ characterBlock();
 
 // Regenerate Focus
 if (focus_regen) {
-    if (character_focus < FOCUS_PENALTY_THRESHOLD) {
+    if (character_focus < 0) {
         character_focus = 0;
         focus_regen = false;
         alarm[9] = FOCUS_REGEN_PENALTY;
@@ -61,7 +61,6 @@ if (speed > 0) {
     if (speed < QUICKSTEP_ATTACK_THRESHOLD && !quick_step_attack) {
         can_attack = true;
     }
-    effect_create_below(ef_smoke, x, y, 1, make_colour_hsv(0, 16, 96));
 }
 else {
     if (quick_stepping && !swordID) {

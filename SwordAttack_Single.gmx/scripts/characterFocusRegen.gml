@@ -38,7 +38,7 @@ characterBlock();
 
 // Regenerate Focus
 if (focus_regen) {
-    if (character_focus < FOCUS_PENALTY_THRESHOLD) {
+    if (character_focus < 0) {
         character_focus = 0;
         focus_regen = false;
         alarm[9] = FOCUS_REGEN_PENALTY;

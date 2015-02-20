@@ -68,7 +68,7 @@ if (!stunned || sword_lock) {
 }
 
 if (!stunned) {
-    if (can_target &amp;&amp; can_move &amp;&amp; !blocking &amp;&amp; cursor_button_pressed) {
+    if (can_target &amp;&amp; can_move &amp;&amp; !blocking &amp;&amp; !block_lock &amp;&amp; cursor_button_pressed) {
         // need to handle case of block_raise alarms and state variables
         
         
@@ -80,11 +80,13 @@ if (!stunned) {
         // now just move it around
         cursorID.x += x_axisL * CURSOR_SPEED;
         cursorID.y += y_axisL * CURSOR_SPEED;
+        // make player face the cursor
+        image_angle = point_direction(x, y, cursorID.x, cursorID.y);        
         // can also regenerate focus, but no other
         characterFocusRegen();
     }
     else {
-        if (cursor_button_released) {
+        if (cursor_button_released &amp;&amp; cursorID) {
             targetID = collision_point(cursorID.x, cursorID.y, obj_targetable,false, true);
             with(cursorID) instance_destroy();
             cursorID = 0;
