@@ -66,7 +66,7 @@ if (speed > 0) {
 else {
     if (quick_stepping && !swordID) {
         quick_stepping = false;
-        quickstep_collided = false;
+        last_collided_with = 0;
         can_move = true;
         can_block = true;
     }
@@ -130,7 +130,7 @@ if (!stunned && can_target && !swordID) {
         }
     }
     // If I have a specific enemy target, just look at him
-    else if (targetID) {            
+    else if (targetID && instance_exists(targetID)) {            
         image_angle = point_direction(x, y, targetID.x,targetID.y);
     }
     // I aint got no target
@@ -152,6 +152,11 @@ if (!stunned && shoulder_r_pressed) {
             can_block = false;
             can_move = false;
             can_target = false;
+            // clear out attack related alarms
+            alarm[0] = -1;
+            alarm[2] = -1;
+            alarm[3] = -1;
+            
             //var attack_speed = character_focus / 100 + .2;//minor tweaks for feel
             //if (attack_speed < .7) attack_speed = .7;
             character_focus -= (FIRST_ATTACK_FOCUS_COST + (attack_combo * SUCCESSIVE_ATTACK_FOCUS_MODIFIER))
@@ -260,12 +265,13 @@ if (!stunned && can_move) {
         var new_x = x + x_axisL * MOVEMENT_SPEED;
         var new_y = y + y_axisL * MOVEMENT_SPEED;
     }
-    
-    if (place_empty(new_x, new_y)) {
+    position_check = characterCheckPosition(new_x, new_y);
+    if (position_check == 1) {
         x = new_x;
         y = new_y;
-    } else if (place_empty(new_x, y)) x = new_x;
-    else if (place_empty(x, new_y)) y = new_y;
+    }
+    else if (position_check == 2) x = new_x;
+    else if (position_check == 3) y = new_y;
 }
 
 #define characterSwordMove
@@ -273,60 +279,107 @@ if (!stunned && can_move) {
 
 // player and sword moving
 if (!stunned && swordID) {
-    // advance to target while attacking as long as not quickstepping
-    if(!quick_step_attack) {
-        var x_adj;
-        var y_adj;
+
+    my_push_direction = image_angle;
+    push_speed = MOVEMENT_SPEED;
+    // did I hit anyone?  push them first
+    hit_characters = ds_list_size(swordID.hit_characters);
+    if (hit_characters) {
+        push_speed *= ATTACK_PUSH_MULTIPLIER;
+    
+        // if anyone blocked, cut my push in half and I'm pushed backwards
         if (swordID.hit_blocked) {
-            // both this object and the target would move back at half speed
-            x_adj = dcos(image_angle - 180) * MOVEMENT_SPEED * ATTACK_MOVEMENT_MULTIPLIER;
-            y_adj = dsin(image_angle - 180) * MOVEMENT_SPEED * ATTACK_MOVEMENT_MULTIPLIER;
-            
-            // collision detection for target
-            
-            // movement if no collision
-            targetID.x -= x_adj;
-            targetID.y += y_adj;
-            
-            // collision detection for me backing up
-            
-            // movement if no collision
-            x += x_adj;
-            y -= y_adj;
+            push_speed *= .5;
+            my_push_direction -= 180;
         }
-        else {
-            // free swing or hitting target
-            var mult = swordID.speed_multiplier;
-            x_adj = dcos(image_angle) * mult * MOVEMENT_SPEED;
-            y_adj = dsin(image_angle) * mult * MOVEMENT_SPEED;
-            // if collision with opponent
-            if (place_meeting(x + x_adj, y - y_adj, targetID)) {
-                // if opponent can move back, push at half speed
-                x_adj *= ATTACK_PUSH_MULTIPLIER;
-                y_adj *= ATTACK_PUSH_MULTIPLIER;
-                with (targetID) {
-                    // but only if space behind him is open
-                    if (place_free(x + x_adj, y - y_adj)) {
-                        // push him back!
-                        x += x_adj;
-                        y -= y_adj;
-                    }
-                    else {
-                        // no one will move
-                        x_adj = 0;
-                        y_adj = 0;
-                    }
-                }
+        
+        // in order to push them back, I need to put them in priority of distance from me.
+        // push furthest characters first to make way for those closer to me to be pushed back
+        priority_characters = ds_priority_create();
+        for (i = 0; i < hit_characters; i++) {
+            current = ds_list_find_value(swordID.hit_characters, i);
+            // in case current died
+            if (instance_exists(current)) {
+                distance = point_distance(x, y, current.x, current.y);
+                ds_priority_add(priority_characters, current, distance);
             }
-            x += x_adj;
-            y -= y_adj;
+        }
+        
+        // now deal with the priority queue and push people if I can
+        while (!ds_priority_empty(priority_characters)) {
+            current = ds_priority_delete_max(priority_characters);
+            push_direction = point_direction(x, y, current.x, current.y);
+            new_x = current.x + dcos(push_direction) * push_speed;
+            new_y = current.y - dsin(push_direction) * push_speed;
+            current.new_x = new_x;
+            current.new_y = new_y;
+            with (current) {
+                position_check = characterCheckPosition(new_x, new_y);
+                if (position_check == 1) {
+                    x = new_x;
+                    y = new_y;
+                }
+                else if (position_check == 2) x = new_x;
+                else if (position_check == 3) y = new_y;
+            }
+        }
+        ds_priority_destroy(priority_characters);
+    }
+    // now I push or get pushed
+    if(!quick_step_attack) {           
+        new_x = x + dcos(my_push_direction) * push_speed;
+        new_y = y - dsin(my_push_direction) * push_speed;
+        position_check = characterCheckPosition(new_x, new_y);
+        if (position_check == 1) {
+            x = new_x;
+            y = new_y;
+        }
+        else if (position_check == 2) x = new_x;
+        else if (position_check == 3) y = new_y;
+    }
+    else {
+        // always adjust sword position to player position
+        swordID.x = x;
+        swordID.y = y;
+        swordID.image_angle = image_angle;
+    }
+}
+
+#define characterCheckPosition
+/// characterCheckPosition(x, y);
+
+// check for collisions to see if we can place character at (x, y)
+new_x = argument0;
+new_y = argument1;
+// get the list of obj_character_solids.  If I'd collide with one that isn't me, don't move forward
+num = instance_number(obj_character_solids);
+collision_xy = false;
+collision_x = false;
+collision_y = false;
+for (i = 0; i < num && !(collision_xy && collision_x && collision_y); i++) {
+    check_instance = instance_find(obj_character_solids, i);
+    // not checking for a collision with myself.  if match, then go to next i value
+    if (check_instance == id) continue;
+    if (!collision_xy) {
+        if (place_meeting(new_x, new_y, check_instance)) {
+            collision_xy = true;
         }
     }
-    // always adjust sword position to player position
-    swordID.x = x;
-    swordID.y = y;
-    swordID.image_angle = image_angle;
+    if (collision_xy && !collision_x) {
+        if (place_meeting(new_x, y, check_instance)) {
+            collision_x = true;
+        }
+    }
+    if (collision_xy && collision_x && !collision_y) {
+        if (place_meeting(x, new_y, check_instance)) {
+            collision_y = true;
+        }
+    }
 }
+if (!collision_xy) return 1;
+if (!collision_x) return 2;
+if (!collision_y) return 3;
+return 0;
 
 #define characterBlock
 /// characterBlock() 

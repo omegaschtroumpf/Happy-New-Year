@@ -5,7 +5,7 @@
   <visible>-1</visible>
   <depth>0</depth>
   <persistent>0</persistent>
-  <parentName>obj_targetable</parentName>
+  <parentName>obj_character_solids</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
     <event eventtype="0" enumb="0">
@@ -59,7 +59,7 @@ SWORD_LOCK_BUTTON_LEAD = 10;
 BLOCK_MOVEMENT_MULTIPLIER = .5;
 ATTACK_MOVEMENT_MULTIPLIER = .5;
 POWER_ATTACK_MOVEMENT_MULTIPLIER = 2;
-ATTACK_PUSH_MULTIPLIER = .25;
+ATTACK_PUSH_MULTIPLIER = .7;
 FIRST_ATTACK_CAN_ATTACK_DELAY = 1; // after attack is over
 FIRST_ATTACK_CAN_MOVE_DELAY = 7; // after attack is over
 FIRST_ATTACK_COMBO_DELAY = 5; // after attack is over
@@ -117,7 +117,7 @@ block_held = false; // set to true when block button is pressed, false when bloc
 blocking = false; // set to true when block is raised
 block_lock = false; // ensures the minimum block time
 invincible = false; // this stays set for the greater of minimum block time, or the time that the player holds the block button beyond minimum block time
-quickstep_collided = false;
+last_collided_with = 0;
 soft_target = false;
 
 random_move = 0; // 1-29
@@ -567,15 +567,18 @@ if (other.id != swordID) {
             alarm[5] = -1;
         }
         else {
+            // I'm hit
             // lose my sword
             if (swordID) {
                 with (swordID) instance_destroy();
                 swordID = 0;
             }
             
-            // knockback
-            x += dcos(targetID.direction) * KNOCKBACK;
-            y -= dsin(targetID.direction) * KNOCKBACK;
+            // add myself to sword's hit_characters list if I'm not already there
+            if (ds_list_find_index(other.hit_characters, id) == -1) {
+                ds_list_add(other.hit_characters, id);
+            }
+            
             character_health--;
             image_index = DAMAGE_IMAGE;
             invincible = true;
@@ -607,6 +610,10 @@ if (other.id != swordID) {
     else {
         // hit blocked?
         if (blocking &amp;&amp; other.hit_blocked != true) {
+            // add myself to sword's hit_characters list if I'm not already there
+            if (ds_list_find_index(other.hit_characters, id) == -1) {
+                ds_list_add(other.hit_characters, id);
+            }
             other.hit_blocked = true;
             character_focus -= BLOCK_FOCUS_COST;
             audio_play_sound(snd_block, 1, false);
@@ -641,9 +648,12 @@ if (other.id != swordID) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Handle Quickstep Collisions
+            <string>/// Handle Quickstep And RegularCollisions
 
-if (quick_stepping &amp;&amp; !quickstep_collided) {
+if (quick_stepping &amp;&amp; last_collided_with != other.id) {
+    last_collided_with = other.id;
+    other.last_collided_with = id;
+    
     var lock_swords = false;
 
     // get out of collision
@@ -652,24 +662,8 @@ if (quick_stepping &amp;&amp; !quickstep_collided) {
     other.x = other.xprevious;
     other.y = other.yprevious;
 
-    // at least one of us is quickstepping, now we are both effectively quickstepping.
-    if (!other.quick_stepping) {
-        stunned = true;
-        alarm[8] = QUICKSTEP_SHORT_STUN_DELAY;
-        character_focus += QUICKSTEP_SINGLE_COLLISION_FOCUS_BONUS;
-        if (speed &gt;= QUICKSTEP_SPEED_THRESHOLD) other.alarm[8] = QUICKSTEP_LONG_STUN_DELAY;
-        else other.alarm[8] = QUICKSTEP_SHORT_STUN_DELAY;
-        with (other) {
-            stunned = true;
-            blocking = false;
-            block_lock = false;
-            block_held = false;
-            invincible = false;
-            image_index = NORMAL_IMAGE;
-            character_focus -= QUICKSTEP_SINGLE_COLLISION_FOCUS_PENALTY;
-        }
-    }
-    else {
+
+    if (quick_stepping &amp;&amp; other.quick_stepping) {
         character_focus += QUICKSTEP_MUTUAL_COLLISION_FOCUS_BONUS;
         other.character_focus += QUICKSTEP_MUTUAL_COLLISION_FOCUS_BONUS;
         // both are quickstepping do we recoil or lock swords?
@@ -680,6 +674,42 @@ if (quick_stepping &amp;&amp; !quickstep_collided) {
             other.stunned = true;
             other.alarm[8] = QUICKSTEP_SHORT_STUN_DELAY;
         }
+    }
+    else if (!other.quick_stepping) {
+        stunned = true;
+        alarm[8] = QUICKSTEP_SHORT_STUN_DELAY;
+        character_focus += QUICKSTEP_SINGLE_COLLISION_FOCUS_BONUS;
+        if (speed &gt;= QUICKSTEP_SPEED_THRESHOLD) other.alarm[8] = QUICKSTEP_LONG_STUN_DELAY;
+        else other.alarm[8] = QUICKSTEP_SHORT_STUN_DELAY;
+        with (other) {
+            quick_stepping = true;
+            stunned = true;
+            blocking = false;
+            block_lock = false;
+            block_held = false;
+            invincible = false;
+            image_index = NORMAL_IMAGE;
+            character_focus -= QUICKSTEP_SINGLE_COLLISION_FOCUS_PENALTY;
+        }
+    }
+    else {
+        // self is not quickstepping
+        with (other) {
+            stunned = true;
+            alarm[8] = QUICKSTEP_SHORT_STUN_DELAY;
+            character_focus += QUICKSTEP_SINGLE_COLLISION_FOCUS_BONUS;
+        }
+        if (other.speed &gt;= QUICKSTEP_SPEED_THRESHOLD) alarm[8] = QUICKSTEP_LONG_STUN_DELAY;
+        else alarm[8] = QUICKSTEP_SHORT_STUN_DELAY;
+        quick_stepping = true;
+        stunned = true;
+        blocking = false;
+        block_lock = false;
+        block_held = false;
+        invincible = false;
+        image_index = NORMAL_IMAGE;
+        character_focus -= QUICKSTEP_SINGLE_COLLISION_FOCUS_PENALTY;
+        
     }
     
     if (lock_swords) {
@@ -729,16 +759,20 @@ if (quick_stepping &amp;&amp; !quickstep_collided) {
             direction -= 180;
         }
         
-        high_speed = high_speed * QUICKSTEP_COLLISION_MULTIPLIER;
+        high_speed *= QUICKSTEP_COLLISION_MULTIPLIER;
         speed = high_speed;
         other.speed = high_speed;
         friction = high_speed_friction;
         other.friction = high_speed_friction;
     }
     
-
-    other.quickstep_collided = true;
-    quickstep_collided = true;
+}
+else if (!other.quick_stepping) {
+    // get out of collision
+    x = xprevious;
+    y = yprevious;
+    other.x = other.xprevious;
+    other.y = other.yprevious;
 }
 </string>
           </argument>

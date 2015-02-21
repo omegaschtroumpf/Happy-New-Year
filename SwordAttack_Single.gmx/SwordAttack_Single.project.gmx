@@ -35,6 +35,7 @@
       <object>objects\obj_stats</object>
     </objects>
     <object>objects\obj_targetable</object>
+    <object>objects\obj_character_solids</object>
     <objects name="Characters">
       <object>objects\obj_character</object>
       <object>objects\obj_charactersword</object>

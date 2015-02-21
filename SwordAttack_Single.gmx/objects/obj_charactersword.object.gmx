@@ -31,6 +31,7 @@ hit_blocked = false;
 speed_multiplier = 1;
 image_speed = .75;
 
+hit_characters = ds_list_create();
 </string>
           </argument>
         </arguments>
@@ -60,6 +61,39 @@ image_speed = .75;
         </arguments>
       </action>
     </event>
+    <event eventtype="1" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Cleanup
+with (parentID) {
+    swordID = 0;
+    quick_step_attack = false;
+    quick_stepping = false;
+    alarm[0] = FIRST_ATTACK_CAN_ATTACK_DELAY; // time to reset can_attack for combo attacks
+    alarm[2] = FIRST_ATTACK_CAN_MOVE_DELAY; // time to reset can_move
+    alarm[3] = FIRST_ATTACK_COMBO_DELAY; // time for combo to expire
+}
+
+ds_list_destroy(hit_characters);
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="7" enumb="7">
       <action>
         <libid>1</libid>
@@ -77,15 +111,7 @@ image_speed = .75;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Destroy and Clean Up
-with (parentID) {
-    swordID = 0;
-    quick_step_attack = false;
-    quick_stepping = false;
-    alarm[0] = FIRST_ATTACK_CAN_ATTACK_DELAY; // time to reset can_attack for combo attacks
-    alarm[2] = FIRST_ATTACK_CAN_MOVE_DELAY; // time to reset can_move
-    alarm[3] = FIRST_ATTACK_COMBO_DELAY; // time for combo to expire
-}
+            <string>/// Destroy when done
 instance_destroy();
 </string>
           </argument>
