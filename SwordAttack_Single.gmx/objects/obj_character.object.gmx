@@ -133,7 +133,6 @@ targetID = 0;
 swordID = 0;
 controlID = 0;
 statsID = 0;
-enemiesID = 0;
 softTargetAngles = ds_list_create();
 
 

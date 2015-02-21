@@ -71,12 +71,18 @@ used_percentage = (p1_focus_max - p1_focus) / p1_focus_max;
 remaining_bar_width = remaining_percentage * total_bar_width;
 used_bar_width = used_percentage * total_bar_width;
 
-// draw remaining focus bar in green
-draw_rectangle_colour(player1.x - total_bar_width, player1.y + 100, player1.x - used_bar_width, player1.y + 80, c_green, c_green, c_green, c_green, false);
+// draw remaining focus bar in appropriate color
+bar_color = make_colour_hsv(remaining_percentage * 70, 255, 192);
+line_color = make_color_hsv(70, 255, 192);
+//merge_colour(c_yellow, c_green, remaining_percentage);
+
+draw_rectangle_colour(player1.x - total_bar_width, player1.y + 100, player1.x - used_bar_width, player1.y + 80, bar_color, bar_color, bar_color, bar_color, false);
 // draw used focus bar in red
 if (used_bar_width &gt; 0)
     draw_rectangle_colour(player1.x - used_bar_width, player1.y + 100, player1.x, player1.y + 80, c_red, c_red, c_red, c_red, false);
-
+// draw end marker for remaining focus
+draw_rectangle_colour(player1.x - used_bar_width -1, player1.y + 100, player1.x - used_bar_width + 1, player1.y + 80, line_color, line_color, line_color, line_color, false);
+            
 /*
 total_bar_width = p2_focus_max;
 remaining_percentage = p2_focus / p2_focus_max;

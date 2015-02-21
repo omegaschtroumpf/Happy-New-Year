@@ -49,7 +49,6 @@ if (focus_regen) {
     else if (character_focus < character_focus_max) {
         if (character_focus < FOCUS_RATE_THRESHOLD) character_focus += FOCUS_REGEN_FAST;
         else character_focus += FOCUS_REGEN;
-        if (character_focus > character_focus_max) character_focus = character_focus_max;
     }
 }
 
@@ -111,11 +110,11 @@ if (!stunned && can_target && !swordID) {
             // only do more calculation with this enemy if he is in range
             if (character_distance <= TARGET_MAX_DISTANCE) {
                 character_direction = point_direction(x, y, character.x, character.y);
+                ds_list_add(softTargetAngles, character_direction);
                 angle_diff = angle_difference(image_angle, character_direction);
                 if ((angle_diff < TARGET_ANGLE / 2) && angle_diff > (-TARGET_ANGLE / 2)) {
-                    // in my line of sight, add to my vector calculations and softTargetAngles list
+                    // in my line of sight, add to my vector calculations
                     see_enemies = true;
-                    ds_list_add(softTargetAngles, character_direction);
                     // distance to enemy will weight the vectoring, the farther away, the lower the influence an enemy has on targeting
                     // character.x - x because I want to point from me at relative 0,0 towards enemy
                     vector_x += (character.x - x) / sqr(sqr(character_distance));
@@ -218,29 +217,9 @@ if (!stunned && can_move) {
         // do we have quickstep input?
         if (abs(x_axisL) > .25 || abs(y_axisL) > .25) {
             if (character_focus >= QUICKSTEP_FOCUS_COST + 1) {
-                stick_angle = point_direction(0, 0, x_axisL, y_axisL);
-                
-                // like with attacks, if soft targeting, see if we're pointing at one of the dudes.
-                // if we are soft-targeting and have directional input, direct the attack
-                // toward the soft-targeted enemy whose angle is closest to input angle
-                if (soft_target){
-                    stick_angle = point_direction(0, 0, x_axisL, y_axisL);
-                    num = ds_list_size(softTargetAngles);
-                    smallest_angle_diff = 181; // angle_difference() returns a value -180..180
-                    new_angle = image_angle; // Attack towards soft-target focus unless input points towards a soft-targeted enemy 
-                    for (i = 0; i < num; i++) {
-                        target_angle = ds_list_find_value(softTargetAngles, i);
-                        angle_diff = abs(angle_difference(stick_angle, target_angle));
-                        if (angle_diff < smallest_angle_diff && angle_diff < TARGET_ANGLE) {
-                            smallest_angle_diff = angle_diff;
-                            new_angle = target_angle;
-                        }
-                    }
-                    image_angle = new_angle;
-                }    
-                
+                stick_dir = point_direction(0, 0, x_axisL, y_axisL);
                 // what is the difference from character direction to input direction
-                calc_dir = angle_difference(stick_angle, image_angle);
+                calc_dir = angle_difference(stick_dir, image_angle);
                 // if close enough to it, adjust calc_dir to directly forward or directly backward
                 abs_calc_dir = abs(calc_dir)
                 if (abs_calc_dir < 30) calc_dir = 0;
@@ -360,10 +339,12 @@ if (!stunned && swordID) {
         else if (position_check == 2) x = new_x;
         else if (position_check == 3) y = new_y;
     }
-    // always adjust sword position to player position
-    swordID.x = x;
-    swordID.y = y;
-    swordID.image_angle = image_angle;
+    else {
+        // always adjust sword position to player position
+        swordID.x = x;
+        swordID.y = y;
+        swordID.image_angle = image_angle;
+    }
 }
 
 #define characterCheckPosition
