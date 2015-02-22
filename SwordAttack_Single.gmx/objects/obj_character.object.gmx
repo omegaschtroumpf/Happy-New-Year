@@ -649,18 +649,20 @@ if (other.id != swordID) {
             <kind>1</kind>
             <string>/// Handle Quickstep And RegularCollisions
 
-if (quick_stepping &amp;&amp; last_collided_with != other.id) {
-    last_collided_with = other.id;
-    other.last_collided_with = id;
-    
-    var lock_swords = false;
-
     // get out of collision
     x = xprevious;
     y = yprevious;
     other.x = other.xprevious;
     other.y = other.yprevious;
 
+if (quick_stepping &amp;&amp; last_collided_with != other.id) {
+    last_collided_with = other.id;
+    other.last_collided_with = id;
+    
+    var lock_swords = false;
+    
+    was_blocking = false;
+    other_was_blocking = false;
 
     if (quick_stepping &amp;&amp; other.quick_stepping) {
         character_focus += QUICKSTEP_MUTUAL_COLLISION_FOCUS_BONUS;
@@ -680,6 +682,7 @@ if (quick_stepping &amp;&amp; last_collided_with != other.id) {
         character_focus += QUICKSTEP_SINGLE_COLLISION_FOCUS_BONUS;
         if (speed &gt;= QUICKSTEP_SPEED_THRESHOLD) other.alarm[8] = QUICKSTEP_LONG_STUN_DELAY;
         else other.alarm[8] = QUICKSTEP_SHORT_STUN_DELAY;
+        if (other.blocking) other_was_blocking = true;
         with (other) {
             quick_stepping = true;
             stunned = true;
@@ -700,6 +703,7 @@ if (quick_stepping &amp;&amp; last_collided_with != other.id) {
         }
         if (other.speed &gt;= QUICKSTEP_SPEED_THRESHOLD) alarm[8] = QUICKSTEP_LONG_STUN_DELAY;
         else alarm[8] = QUICKSTEP_SHORT_STUN_DELAY;
+        if (blocking) was_blocking = true;
         quick_stepping = true;
         stunned = true;
         blocking = false;
@@ -743,6 +747,39 @@ if (quick_stepping &amp;&amp; last_collided_with != other.id) {
 
     }
     else {
+        // make a vector out of the two speeds and directions to determine resulting direction and magnitude.
+        // luckily we have hspeedh and vspeed
+        result_hspeed = hspeed + other.hspeed;
+        result_vspeed = vspeed + other.vspeed;
+        result_direction = point_direction(0, 0, result_hspeed, result_vspeed);
+        result_speed = sqrt(sqr(result_hspeed) + sqr(result_vspeed));
+        if (speed != 0 &amp;&amp; other.speed != 0) {
+            // we're both moving
+            speed = result_speed / 4;
+            direction = result_direction;
+            other.speed = result_speed / 4;
+            other.direction = result_direction
+        }
+        else if (speed != 0) {
+            // I was moving and other guy was not
+            speed = result_speed / 4;
+            direction = result_direction - 180;
+            other.direction = result_direction;
+            other.speed = result_speed / 2;
+            other.friction = QUICKSTEP_FRICTION_BASE;
+            if (other_was_blocking) other.speed /= 2;
+        }
+        else {
+            // other guy is moving and I'm not
+            direction = result_direction / 2;
+            speed = result_speed;
+            friction = QUICKSTEP_FRICTION_BASE
+            other.speed = result_speed / 4;
+            other.direction = result_direction - 180;
+            if (was_blocking) speed /= 2;
+        }
+    
+        /*  OLD MODEL
         // take the higher of the two speeds and use it as the new speed for both characters to bounce
         var high_speed = speed;
         var high_speed_direction = direction;
@@ -763,6 +800,7 @@ if (quick_stepping &amp;&amp; last_collided_with != other.id) {
         other.speed = high_speed;
         friction = high_speed_friction;
         other.friction = high_speed_friction;
+        */
     }
     
 }
