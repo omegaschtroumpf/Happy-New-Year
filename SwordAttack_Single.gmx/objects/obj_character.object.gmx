@@ -38,6 +38,9 @@ FOCUS_REGEN = .78; // 14 / 30 // ~14 PER SECOND (orig 7/30)
 FOCUS_REGEN_FAST = .86; // 1 / 3 20 PER SECOND (original 1/3)
 FOCUS_PENALTY_THRESHOLD = 0;
 FOCUS_REGEN_PENALTY = 90; // when focus &lt; 0, # steps regen is suspended
+QUICKSTEP_MINIMUM_INPUT = .25; // minimum controller input
+QUICKSTEP_FORWARD_ANGLE_RANGE = 30; // when targeting
+QUICKSTEP_BACK_ANGLE_RANGE = 30; // when targeting
 QUICKSTEP_SPEED_BASE = 15;
 QUICKSTEP_FORWARD_MULTIPLIER = 1.75;
 QUICKSTEP_BACK_MULTIPLIER = 1.5;
@@ -466,6 +469,40 @@ if (!blocking) {
 can_attack = true;
 can_block = true;
 attack_penalty = false;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Input/AI script only if character can use input right now
+
+// get input if appropriate
+if (!stunned || sword_lock) {
+    characterInput();
+}
+
+// regenerate focus if appropriate
+characterFocusRegen();
+
+// adjust quickstep friction and maybe end quickstepping
+characterQSFriction();
 </string>
           </argument>
         </arguments>

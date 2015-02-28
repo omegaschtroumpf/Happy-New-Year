@@ -1,22 +1,11 @@
 #define characterStepHelper
 /// characterStepHelper() 
 
-// Input, Movement, Attacking, Blocking
-
-// call main input/AI script only if character can use input right now
-if (!stunned || sword_lock) {
-    characterInput();
-}
+// Movement, Attacking, Blocking
 
 /*
  *  All script calls after this point go to tabs in characterHelper
  */
-
-// regenerate focus if appropriate
-characterFocusRegen();
-
-// adjust quickstep friction and maybe end quickstepping
-characterQSFriction();
 
 // soft-target, targetID, or input direction
 characterTarget();
@@ -32,6 +21,22 @@ characterSwordMove();
 
 // blocking
 characterBlock();
+
+#define characterStepBeginHelper
+/// characterStepBeginHelper()
+
+/*
+ *  All script calls after this point go to tabs in characterHelper
+ */
+
+// get Input if appropriate
+characterInput();
+
+// regenerate focus if appropriate
+characterFocusRegen();
+
+// adjust quickstep friction and maybe end quickstepping
+characterQSFriction();
 
 #define characterFocusRegen
 /// characterFocusRegen() 
@@ -219,7 +224,7 @@ if (!stunned && shoulder_r_pressed) {
 if (!stunned && can_move) {
     if (can_quickstep && dash_button_pressed && character_focus > 0) {
         // do we have quickstep input?
-        if (abs(x_axisL) > .25 || abs(y_axisL) > .25) {
+        if (abs(x_axisL) > QUICKSTEP_MINIMUM_INPUT || abs(y_axisL) > QUICKSTEP_MINIMUM_INPUT) {
             if (character_focus >= QUICKSTEP_FOCUS_COST + 1) {
                 stick_angle = point_direction(0, 0, x_axisL, y_axisL);
                 
@@ -246,8 +251,8 @@ if (!stunned && can_move) {
                 calc_dir = angle_difference(stick_angle, image_angle);
                 // if close enough to it, adjust calc_dir to directly forward or directly backward
                 abs_calc_dir = abs(calc_dir)
-                if (abs_calc_dir < 30) calc_dir = 0;
-                if (abs_calc_dir > 150) calc_dir = 180;
+                if (abs_calc_dir < QUICKSTEP_FORWARD_ANGLE_RANGE) calc_dir = 0;
+                if (abs_calc_dir > 180 - QUICKSTEP_BACK_ANGLE_RANGE) calc_dir = 180;
                 
                 // calculate magnitude for direction
                 calc_mag = 0;
@@ -438,3 +443,7 @@ if(!stunned) {
         }
     }
 }
+#define characterActionHelper
+/// characterActionHelper()
+
+

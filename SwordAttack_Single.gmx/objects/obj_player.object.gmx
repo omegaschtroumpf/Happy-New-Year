@@ -63,16 +63,6 @@ cursor_button_released = 0;
             <kind>1</kind>
             <string>/// Handle special player activity
 
-if (!stunned || sword_lock) {
-    playerInput();
-}
-
-// regenerate focus if appropriate
-characterFocusRegen();
-
-// adjust quickstep friction and maybe end quickstepping
-characterQSFriction();
-
 if (!stunned) {
     if (can_target &amp;&amp; can_move &amp;&amp; !blocking &amp;&amp; !block_lock &amp;&amp; cursor_button_pressed) {
         // need to handle case of block_raise alarms and state variables
@@ -102,19 +92,7 @@ if (!stunned) {
         }
 
         // soft-target, targetID, or input direction
-        characterTarget();
-        
-        // attacking
-        characterAttack();
-        
-        // move based on character input    
-        characterMove();
-        
-        // move based on swinging a sword
-        characterSwordMove();
-        
-        // blocking
-        characterBlock();
+        characterStepHelper();
         
     }
 }
