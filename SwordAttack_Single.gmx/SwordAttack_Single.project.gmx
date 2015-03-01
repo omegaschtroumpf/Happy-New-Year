@@ -28,6 +28,7 @@
     <script>scripts\characterInput.gml</script>
     <script>scripts\characterDeath.gml</script>
     <script>scripts\characterStepHelper.gml</script>
+    <script>scripts\characterRelationships.gml</script>
   </scripts>
   <objects name="objects">
     <objects name="Control">
