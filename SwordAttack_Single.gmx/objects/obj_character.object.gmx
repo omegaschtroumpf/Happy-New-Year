@@ -83,6 +83,23 @@ BLOCK_FOCUS_COST = 45;
 PARRY_THRESHOLD = 4;
 PARRIED_STUN_DELAY = 15;
 PARRIED_SPEED = 15;
+// Attitude adjustments and Nerve constants
+ATTITUDE_ENEMY_MAX = -2
+ATTITUDE_ALLY_MIN = 2;
+ATTITUDE_ATTACKED_BY_CHARACTER = -5;
+ATTITUDE_ALLY_ATTACKED_BY_ENEMY = -1;
+ATTITUDE_ALLY_ATTACKED_BY_NEUTRAL = -2;
+ATTITUDE_DISCOVERED_AS_DEMON = -3;
+ATTITUDE_QUICKSTEP = -1;
+ATTITUDE_SWORD = -1;
+ATTITUDE_GESTURE_THREAT = -2;
+ATTITUDE_GESTURE_PLACATE = 1;
+ATTITUDE_OTHER_INTENT = 1;
+
+
+
+
+
 RESPAWN_DELAY = 10;
 DAMAGE_DELAY = 15;
 NORMAL_IMAGE = 0;
@@ -133,14 +150,12 @@ follow_up_attack = false;
 
 // related objects
 targetID = 0;
+protectID = 0;
 swordID = 0;
 controlID = 0;
 statsID = 0;
 softTargetAngles = ds_list_create();
-allyList = ds_list_create();
-protectList = ds_list_create();
-neutralList = ds_list_create();
-targetList = ds_list_create();
+attitudesList = ds_list_create();
 
 
 // player controller input variables
@@ -186,10 +201,9 @@ with (swordID) instance_destroy();
 }
 
 ds_list_destroy(softTargetAngles);
-ds_list_destroy(allyList);
-ds_list_destroy(protectList);
-ds_list_destroy(neutralList);
-ds_list_destroy(targetList);
+ds_list_destroy(attitudesList);
+
+// take myself out of other characters' attitude lists
 </string>
           </argument>
         </arguments>

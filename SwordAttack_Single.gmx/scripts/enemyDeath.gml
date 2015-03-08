@@ -26,7 +26,10 @@ characterCount = instance_number(obj_character);
 for (i = 0; i < characterCount; i++){
     currentCharacter = instance_find(obj_character, i);
     if (currentCharacter != id) {
-        removeAttitude(currentCharacter, id);
+        removeAlly(currentCharacter, id);
+        removeNeutral(currentCharacter, id);
+        removeProtected(currentCharacter, id);
+        removeTarget(currentCharacter, id);    
     }
 }
 

@@ -40,8 +40,13 @@ if (gamepad_is_connected(deviceID)) {
     target_cancel_button_pressed = gamepad_button_check_pressed(deviceID, gp_face3) || gamepad_button_check_pressed(deviceID, gp_stickl);
     
     // cursor button
-    cursor_button_pressed = gamepad_button_check(deviceID, gp_shoulderlb);
-    cursor_button_released = gamepad_button_check_released(deviceID, gp_shoulderlb);
+    cursor_button_pressed = gamepad_button_check(deviceID, gp_face4);
+    cursor_button_released = gamepad_button_check_released(deviceID, gp_face4);
+    
+    // gesture buttons
+    aggressive_button_pressed = gamepad_button_check_released(deviceID, gp_shoulderrb);
+    placating_button_pressed = gamepad_button_check_released(deviceID, gp_shoulderlb);
+
 }
 else {
     x_axisL = 0;
@@ -80,6 +85,11 @@ else {
     cursor_button_pressed = keyboard_check(ord('Y'));
     
     cursor_button_released = keyboard_check_released(ord('Y'));
+    
+    // gesture buttons
+    aggressive_button_pressed = keyboard_check_released(ord('Z'));
+    placating_button_pressed = keyboard_check_released(ord('X'));
+
            
 }
 

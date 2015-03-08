@@ -106,14 +106,16 @@ if (!stunned && can_target && !swordID) {
             ds_list_clear(softTargetAngles);
             // look for enemies and calculate a new image_angle
             // go through the enemies' positions and see if they are in my line of sight
-            num = ds_list_size(targetList);
+            num = ds_list_size(attitudesList);
             vector_x = 0;
             vector_y = 0;
             see_enemies = false;
             for (i = 0; i < num; i++) {
-                character = ds_list_find_value(targetList, i);
+                character_attitude = ds_list_find_value(attitudesList, i);
+                character = character_attitude.characterID;
+                attitude = character_attitude.attitude;
                 // don't consider 
-                if (character == id) continue; // don't evaluate self
+                if (character == id || attitude > ATTITUDE_ENEMY_MAX) continue; // don't evaluate self
                 character_distance = point_distance(x, y, character.x, character.y);
                 // only do more calculation with this enemy if he is in range
                 if (character_distance <= TARGET_MAX_DISTANCE) {
@@ -445,4 +447,3 @@ if(!stunned) {
 }
 #define characterActionHelper
 /// characterActionHelper()
-

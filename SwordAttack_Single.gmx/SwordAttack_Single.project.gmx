@@ -28,7 +28,7 @@
     <script>scripts\characterInput.gml</script>
     <script>scripts\characterDeath.gml</script>
     <script>scripts\characterStepHelper.gml</script>
-    <script>scripts\characterRelationships.gml</script>
+    <script>scripts\characterAttitudes.gml</script>
   </scripts>
   <objects name="objects">
     <objects name="Control">
@@ -49,6 +49,7 @@
         <object>objects\obj_enemy</object>
         <object>objects\obj_enemyDumb</object>
       </objects>
+      <object>objects\obj_characterAttitude</object>
     </objects>
     <objects name="Inert">
       <object>objects\obj_inert</object>

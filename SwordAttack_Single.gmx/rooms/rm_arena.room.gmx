@@ -18,22 +18,44 @@
 
 player1 = instance_create(256, 256, obj_player);
 
-enemies = player1.targetList;
+enemies = player1.attitudesList;
 // IF ROOM CHANGES, DESTROY enemies
-
-ds_list_add(enemies, instance_create(600, 200, obj_enemyDumb));
-ds_list_add(enemies, instance_create(500, 250, obj_enemyDumb));
-ds_list_add(enemies, instance_create(600, 300, obj_enemyDumb));
-ds_list_add(enemies, instance_create(100, 900, obj_enemyDumb));
-ds_list_add(enemies, instance_create(300, 900, obj_enemyDumb));
+enemy = instance_create(600, 200, obj_enemyDumb);
+character_attitude = instance_create(0, 0, obj_characterAttitude);
+character_attitude.characterID = enemy;
+character_attitude.attitude = -5;
+ds_list_add(enemies, character_attitude);
+enemy = instance_create(500, 250, obj_enemyDumb);
+character_attitude = instance_create(0, 0, obj_characterAttitude);
+character_attitude.characterID = enemy;
+character_attitude.attitude = -5;
+ds_list_add(enemies, character_attitude);
+enemy = instance_create(600, 300, obj_enemyDumb);
+character_attitude = instance_create(0, 0, obj_characterAttitude);
+character_attitude.characterID = enemy;
+character_attitude.attitude = -5;
+ds_list_add(enemies, character_attitude);
+enemy = instance_create(100, 900, obj_enemyDumb);
+character_attitude = instance_create(0, 0, obj_characterAttitude);
+character_attitude.characterID = enemy;
+character_attitude.attitude = -5;
+ds_list_add(enemies, character_attitude);
+enemy = instance_create(300, 900, obj_enemyDumb);
+character_attitude = instance_create(0, 0, obj_characterAttitude);
+character_attitude.characterID = enemy;
+character_attitude.attitude = -5;
+ds_list_add(enemies, character_attitude);
 
 inert = instance_create(700, 250, obj_armor);
 
 num = ds_list_size(enemies);
 for (i = 0; i &lt; num; i++) {
-    enemy = ds_list_find_value(enemies, i);
+    enemy = ds_list_find_value(enemies, i).characterID;
     enemy.targetID = player1;
-    ds_list_add(enemy.targetList, player1);;
+    enemy_attitude = instance_create(0, 0, obj_characterAttitude);
+    enemy_attitude.characterID = player1;
+    enemy_attitude.attitude = -3;
+    ds_list_add(enemy.attitudesList, enemy_attitude);;
 }
 
 
